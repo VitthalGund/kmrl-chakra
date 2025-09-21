@@ -23,19 +23,18 @@ import { Train, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import api from "@/lib/api"; // Import the central API client
+import api from "@/lib/api";
 
 const departments = [
-  "Operations",
-  "Maintenance",
   "Safety",
   "Human Resources",
-  "Finance",
+  "Finance & Audit",
   "Management",
   "Engineering",
   "Customer Service",
   "Security",
   "Administration",
+  "Operations & Maintenance",
 ];
 
 export default function SignupPage() {
