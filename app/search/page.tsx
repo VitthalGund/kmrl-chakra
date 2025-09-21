@@ -157,7 +157,7 @@ export default function SearchPage() {
         id: chatMessages.length + 2,
         type: "assistant",
         content: data.answer,
-        sources: data.sources,
+        sources: [],
         timestamp: new Date(),
       };
       setChatMessages((prev) => [...prev, aiResponse]);
