@@ -51,6 +51,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
+                className="border border-gray-300"
                 placeholder="employee@kmrl.co.in"
                 required
                 value={email}
@@ -63,7 +64,9 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 required
+                className="border border-gray-300"
                 value={password}
+                placeholder="password "
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
