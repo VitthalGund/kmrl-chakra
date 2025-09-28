@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // "use client";
 
 // import { useState } from "react";
@@ -697,6 +698,19 @@ export default function HomePage() {
   useEffect(() => {
     router.push("/signup");
   }, [router]);
+=======
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+
+export default function HomePage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push("/signup")
+  }, [router])
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -705,5 +719,5 @@ export default function HomePage() {
         <p className="text-gray-400">Redirecting to signup...</p>
       </div>
     </div>
-  );
+  )
 }

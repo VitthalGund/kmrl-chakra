@@ -1,5 +1,6 @@
 // "use client"
 
+<<<<<<< HEAD
 // import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 // import { Button } from "@/components/ui/button"
 // import { Progress } from "@/components/ui/progress"
@@ -613,6 +614,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+=======
+import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 import {
   TrendingUp,
   Users,
@@ -630,8 +639,13 @@ import {
   AlertCircle,
   RefreshCw,
   TrendingDown,
+<<<<<<< HEAD
 } from "lucide-react";
 import Link from "next/link";
+=======
+} from "lucide-react"
+import Link from "next/link"
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 import {
   LineChart,
   Line,
@@ -650,6 +664,7 @@ import {
   ResponsiveContainer,
   RadialBarChart,
   RadialBar,
+<<<<<<< HEAD
 } from "recharts";
 
 export default function AnalyticsPage() {
@@ -706,6 +721,22 @@ export default function AnalyticsPage() {
       searches: 1680,
     },
   ];
+=======
+} from "recharts"
+
+export default function AnalyticsPage() {
+  const [selectedTimeRange, setSelectedTimeRange] = useState("6months")
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const monthlyData = [
+    { month: "Jan", documents: 245, queries: 1200, users: 89, downloads: 456, searches: 890 },
+    { month: "Feb", documents: 289, queries: 1450, users: 95, downloads: 523, searches: 1020 },
+    { month: "Mar", documents: 312, queries: 1680, users: 102, downloads: 612, searches: 1180 },
+    { month: "Apr", documents: 356, queries: 1890, users: 108, downloads: 698, searches: 1340 },
+    { month: "May", documents: 398, queries: 2100, users: 115, downloads: 756, searches: 1520 },
+    { month: "Jun", documents: 445, queries: 2350, users: 122, downloads: 834, searches: 1680 },
+  ]
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 
   const departmentData = [
     { name: "Operations", value: 35, color: "#10b981", users: 45 },
@@ -713,14 +744,22 @@ export default function AnalyticsPage() {
     { name: "Safety", value: 20, color: "#f59e0b", users: 28 },
     { name: "HR", value: 12, color: "#ef4444", users: 18 },
     { name: "Finance", value: 8, color: "#8b5cf6", users: 12 },
+<<<<<<< HEAD
   ];
+=======
+  ]
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 
   const performanceData = [
     { name: "Response Time", value: 95, color: "#10b981" },
     { name: "Uptime", value: 99, color: "#3b82f6" },
     { name: "AI Accuracy", value: 94, color: "#f59e0b" },
     { name: "User Satisfaction", value: 92, color: "#8b5cf6" },
+<<<<<<< HEAD
   ];
+=======
+  ]
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 
   const documentTypes = [
     { type: "Policies", count: 45, percentage: 30, trend: "+5%" },
@@ -728,6 +767,7 @@ export default function AnalyticsPage() {
     { type: "Reports", count: 32, percentage: 21, trend: "-2%" },
     { type: "Training", count: 22, percentage: 15, trend: "+8%" },
     { type: "Procedures", count: 13, percentage: 9, trend: "+3%" },
+<<<<<<< HEAD
   ];
 
   const topDocuments = [
@@ -752,6 +792,17 @@ export default function AnalyticsPage() {
       rating: 4.4,
     },
   ];
+=======
+  ]
+
+  const topDocuments = [
+    { title: "Safety Protocol 2025", views: 1250, downloads: 234, rating: 4.8 },
+    { title: "Emergency Response Plan", views: 1156, downloads: 198, rating: 4.7 },
+    { title: "Train Maintenance Manual", views: 890, downloads: 167, rating: 4.6 },
+    { title: "Employee Handbook", views: 678, downloads: 145, rating: 4.5 },
+    { title: "Customer Service Guide", views: 567, downloads: 123, rating: 4.4 },
+  ]
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 
   const kpiData = [
     {
@@ -811,6 +862,29 @@ export default function AnalyticsPage() {
     return null;
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setIsRefreshing(false)
+  }
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+          <p className="text-sm font-medium text-gray-200">{`${label}`}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {`${entry.dataKey}: ${entry.value.toLocaleString()}`}
+            </p>
+          ))}
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -820,6 +894,7 @@ export default function AnalyticsPage() {
             <div className="flex items-center space-x-3">
               <Link href="/dashboard" className="flex items-center space-x-2">
                 <Train className="h-6 w-6 text-primary" />
+<<<<<<< HEAD
                 <span className="font-bold text-lg text-gray-200">
                   KMRL Chakra
                 </span>
@@ -842,15 +917,32 @@ export default function AnalyticsPage() {
                 href="/search"
                 className="text-gray-300 hover:text-primary transition-colors"
               >
+=======
+                <span className="font-bold text-lg text-gray-200">KMRL Chakra</span>
+              </Link>
+            </div>
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link href="/dashboard" className="text-gray-300 hover:text-primary transition-colors">
+                Dashboard
+              </Link>
+              <Link href="/documents" className="text-gray-300 hover:text-primary transition-colors">
+                Documents
+              </Link>
+              <Link href="/search" className="text-gray-300 hover:text-primary transition-colors">
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 Search
               </Link>
               <Link href="/analytics" className="text-primary font-medium">
                 Analytics
               </Link>
+<<<<<<< HEAD
               <Link
                 href="/settings"
                 className="text-gray-300 hover:text-primary transition-colors"
               >
+=======
+              <Link href="/settings" className="text-gray-300 hover:text-primary transition-colors">
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 Settings
               </Link>
             </nav>
@@ -862,11 +954,15 @@ export default function AnalyticsPage() {
                 disabled={isRefreshing}
                 className="bg-transparent border-gray-600 text-gray-300"
               >
+<<<<<<< HEAD
                 <RefreshCw
                   className={`h-4 w-4 mr-2 ${
                     isRefreshing ? "animate-spin" : ""
                   }`}
                 />
+=======
+                <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 Refresh
               </Button>
               <Button asChild>
@@ -882,6 +978,7 @@ export default function AnalyticsPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
+<<<<<<< HEAD
               <h1 className="text-3xl font-bold mb-2 text-gray-200">
                 Analytics Dashboard
               </h1>
@@ -895,6 +992,15 @@ export default function AnalyticsPage() {
                 variant="secondary"
                 className="bg-green-500/20 text-green-400"
               >
+=======
+              <h1 className="text-3xl font-bold mb-2 text-gray-200">Analytics Dashboard</h1>
+              <p className="text-gray-400">
+                Comprehensive insights into document usage, system performance, and user engagement.
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 <Activity className="h-3 w-3 mr-1" />
                 Live Data
               </Badge>
@@ -922,6 +1028,7 @@ export default function AnalyticsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
+<<<<<<< HEAD
                     <p className="text-sm font-medium text-gray-400">
                       {kpi.title}
                     </p>
@@ -933,6 +1040,13 @@ export default function AnalyticsPage() {
                         className={`text-sm flex items-center ${
                           kpi.trend === "up" ? "text-green-400" : "text-red-400"
                         }`}
+=======
+                    <p className="text-sm font-medium text-gray-400">{kpi.title}</p>
+                    <p className="text-3xl font-bold text-gray-200 mt-1">{kpi.value}</p>
+                    <div className="flex items-center mt-2">
+                      <p
+                        className={`text-sm flex items-center ${kpi.trend === "up" ? "text-green-400" : "text-red-400"}`}
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                       >
                         {kpi.trend === "up" ? (
                           <TrendingUp className="h-4 w-4 mr-1" />
@@ -942,6 +1056,7 @@ export default function AnalyticsPage() {
                         {kpi.change}
                       </p>
                     </div>
+<<<<<<< HEAD
                     <p className="text-xs text-gray-500 mt-1">
                       {kpi.description}
                     </p>
@@ -949,6 +1064,11 @@ export default function AnalyticsPage() {
                   <div className="ml-4 p-3 bg-gray-800 rounded-lg">
                     {kpi.icon}
                   </div>
+=======
+                    <p className="text-xs text-gray-500 mt-1">{kpi.description}</p>
+                  </div>
+                  <div className="ml-4 p-3 bg-gray-800 rounded-lg">{kpi.icon}</div>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </div>
               </CardContent>
             </Card>
@@ -988,9 +1108,13 @@ export default function AnalyticsPage() {
               {/* Enhanced Monthly Trends */}
               <Card className="bg-card border-border">
                 <CardHeader>
+<<<<<<< HEAD
                   <CardTitle className="text-gray-200">
                     Monthly Trends
                   </CardTitle>
+=======
+                  <CardTitle className="text-gray-200">Monthly Trends</CardTitle>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                   <CardDescription className="text-gray-400">
                     Document activity and user engagement over time
                   </CardDescription>
@@ -1035,12 +1159,17 @@ export default function AnalyticsPage() {
               {/* Enhanced Department Usage */}
               <Card className="bg-card border-border">
                 <CardHeader>
+<<<<<<< HEAD
                   <CardTitle className="text-gray-200">
                     Department Usage Distribution
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     Document access by department
                   </CardDescription>
+=======
+                  <CardTitle className="text-gray-200">Department Usage Distribution</CardTitle>
+                  <CardDescription className="text-gray-400">Document access by department</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>
@@ -1050,9 +1179,13 @@ export default function AnalyticsPage() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
+<<<<<<< HEAD
                         label={({ name, percent }) =>
                           `${name} ${(percent * 100).toFixed(0)}%`
                         }
+=======
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                         outerRadius={120}
                         fill="#8884d8"
                         dataKey="value"
@@ -1073,6 +1206,7 @@ export default function AnalyticsPage() {
             {/* Performance Radial Chart */}
             <Card className="bg-card border-border">
               <CardHeader>
+<<<<<<< HEAD
                 <CardTitle className="text-gray-200">
                   System Performance Overview
                 </CardTitle>
@@ -1089,6 +1223,14 @@ export default function AnalyticsPage() {
                     outerRadius="90%"
                     data={performanceData}
                   >
+=======
+                <CardTitle className="text-gray-200">System Performance Overview</CardTitle>
+                <CardDescription className="text-gray-400">Key performance indicators at a glance</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" data={performanceData}>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     <RadialBar
                       minAngle={15}
                       label={{ position: "insideStart", fill: "#fff" }}
@@ -1096,11 +1238,15 @@ export default function AnalyticsPage() {
                       clockWise
                       dataKey="value"
                     />
+<<<<<<< HEAD
                     <Legend
                       iconSize={18}
                       layout="horizontal"
                       verticalAlign="bottom"
                     />
+=======
+                    <Legend iconSize={18} layout="horizontal" verticalAlign="bottom" />
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     <Tooltip content={<CustomTooltip />} />
                   </RadialBarChart>
                 </ResponsiveContainer>
@@ -1114,9 +1260,13 @@ export default function AnalyticsPage() {
                   <Award className="h-5 w-5 mr-2 text-yellow-500" />
                   Top Performing Documents
                 </CardTitle>
+<<<<<<< HEAD
                 <CardDescription className="text-gray-400">
                   Most accessed and downloaded documents
                 </CardDescription>
+=======
+                <CardDescription className="text-gray-400">Most accessed and downloaded documents</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -1130,25 +1280,37 @@ export default function AnalyticsPage() {
                           {index + 1}
                         </div>
                         <div>
+<<<<<<< HEAD
                           <h4 className="font-medium text-gray-200">
                             {doc.title}
                           </h4>
+=======
+                          <h4 className="font-medium text-gray-200">{doc.title}</h4>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                           <div className="flex items-center space-x-2 mt-1">
                             <div className="flex items-center">
                               {[...Array(5)].map((_, i) => (
                                 <div
                                   key={i}
                                   className={`w-3 h-3 rounded-full ${
+<<<<<<< HEAD
                                     i < Math.floor(doc.rating)
                                       ? "bg-yellow-400"
                                       : "bg-gray-600"
+=======
+                                    i < Math.floor(doc.rating) ? "bg-yellow-400" : "bg-gray-600"
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                                   }`}
                                 />
                               ))}
                             </div>
+<<<<<<< HEAD
                             <span className="text-sm text-gray-400">
                               {doc.rating}
                             </span>
+=======
+                            <span className="text-sm text-gray-400">{doc.rating}</span>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                           </div>
                         </div>
                       </div>
@@ -1174,18 +1336,24 @@ export default function AnalyticsPage() {
               {/* Enhanced Document Types Distribution */}
               <Card className="bg-card border-border">
                 <CardHeader>
+<<<<<<< HEAD
                   <CardTitle className="text-gray-200">
                     Document Types Distribution
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     Breakdown by document category
                   </CardDescription>
+=======
+                  <CardTitle className="text-gray-200">Document Types Distribution</CardTitle>
+                  <CardDescription className="text-gray-400">Breakdown by document category</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {documentTypes.map((type, index) => (
                       <div key={index} className="space-y-2">
                         <div className="flex justify-between items-center text-sm">
+<<<<<<< HEAD
                           <span className="font-medium text-gray-200">
                             {type.type}
                           </span>
@@ -1201,6 +1369,12 @@ export default function AnalyticsPage() {
                               }
                               className="text-xs"
                             >
+=======
+                          <span className="font-medium text-gray-200">{type.type}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-400">{type.count} docs</span>
+                            <Badge variant={type.trend.startsWith("+") ? "default" : "destructive"} className="text-xs">
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                               {type.trend}
                             </Badge>
                           </div>
@@ -1215,12 +1389,17 @@ export default function AnalyticsPage() {
               {/* Enhanced Document Activity */}
               <Card className="bg-card border-border">
                 <CardHeader>
+<<<<<<< HEAD
                   <CardTitle className="text-gray-200">
                     Document Activity
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     Monthly document additions and updates
                   </CardDescription>
+=======
+                  <CardTitle className="text-gray-200">Document Activity</CardTitle>
+                  <CardDescription className="text-gray-400">Monthly document additions and updates</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -1230,6 +1409,7 @@ export default function AnalyticsPage() {
                       <YAxis stroke="#9CA3AF" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
+<<<<<<< HEAD
                       <Bar
                         dataKey="documents"
                         fill="#10b981"
@@ -1237,6 +1417,9 @@ export default function AnalyticsPage() {
                         stroke="#065f46"
                         strokeWidth={1}
                       />
+=======
+                      <Bar dataKey="documents" fill="#10b981" radius={[4, 4, 0, 0]} stroke="#065f46" strokeWidth={1} />
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -1254,9 +1437,13 @@ export default function AnalyticsPage() {
                     <div>
                       <p className="text-2xl font-bold text-gray-200">2,847</p>
                       <p className="text-sm text-gray-400">Total Documents</p>
+<<<<<<< HEAD
                       <p className="text-xs text-green-400 mt-1">
                         +156 this month
                       </p>
+=======
+                      <p className="text-xs text-green-400 mt-1">+156 this month</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                   </div>
                 </CardContent>
@@ -1270,9 +1457,13 @@ export default function AnalyticsPage() {
                     <div>
                       <p className="text-2xl font-bold text-gray-200">156</p>
                       <p className="text-sm text-gray-400">Added This Month</p>
+<<<<<<< HEAD
                       <p className="text-xs text-green-400 mt-1">
                         +12% vs last month
                       </p>
+=======
+                      <p className="text-xs text-green-400 mt-1">+12% vs last month</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                   </div>
                 </CardContent>
@@ -1286,9 +1477,13 @@ export default function AnalyticsPage() {
                     <div>
                       <p className="text-2xl font-bold text-gray-200">89.3%</p>
                       <p className="text-sm text-gray-400">Utilization Rate</p>
+<<<<<<< HEAD
                       <p className="text-xs text-green-400 mt-1">
                         +2.1% improvement
                       </p>
+=======
+                      <p className="text-xs text-green-400 mt-1">+2.1% improvement</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                   </div>
                 </CardContent>
@@ -1301,12 +1496,17 @@ export default function AnalyticsPage() {
               {/* Enhanced User Activity */}
               <Card className="bg-card border-border">
                 <CardHeader>
+<<<<<<< HEAD
                   <CardTitle className="text-gray-200">
                     User Activity Trends
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     Monthly active user growth
                   </CardDescription>
+=======
+                  <CardTitle className="text-gray-200">User Activity Trends</CardTitle>
+                  <CardDescription className="text-gray-400">Monthly active user growth</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -1331,17 +1531,23 @@ export default function AnalyticsPage() {
               {/* Enhanced User Engagement */}
               <Card className="bg-card border-border">
                 <CardHeader>
+<<<<<<< HEAD
                   <CardTitle className="text-gray-200">
                     User Engagement Metrics
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     Active user statistics
                   </CardDescription>
+=======
+                  <CardTitle className="text-gray-200">User Engagement Metrics</CardTitle>
+                  <CardDescription className="text-gray-400">Active user statistics</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
                     <div>
                       <div className="flex justify-between text-sm mb-2">
+<<<<<<< HEAD
                         <span className="text-gray-300">
                           Daily Active Users
                         </span>
@@ -1381,6 +1587,29 @@ export default function AnalyticsPage() {
                       <p className="text-xs text-gray-500 mt-1">
                         100% engagement rate
                       </p>
+=======
+                        <span className="text-gray-300">Daily Active Users</span>
+                        <span className="text-gray-200 font-medium">342 / 542</span>
+                      </div>
+                      <Progress value={63} className="h-3" />
+                      <p className="text-xs text-gray-500 mt-1">63% engagement rate</p>
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-gray-300">Weekly Active Users</span>
+                        <span className="text-gray-200 font-medium">489 / 542</span>
+                      </div>
+                      <Progress value={90} className="h-3" />
+                      <p className="text-xs text-gray-500 mt-1">90% engagement rate</p>
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-gray-300">Monthly Active Users</span>
+                        <span className="text-gray-200 font-medium">542 / 542</span>
+                      </div>
+                      <Progress value={100} className="h-3" />
+                      <p className="text-xs text-gray-500 mt-1">100% engagement rate</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                   </div>
                 </CardContent>
@@ -1439,9 +1668,13 @@ export default function AnalyticsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
+<<<<<<< HEAD
                       <p className="text-sm font-medium text-gray-400">
                         Response Time
                       </p>
+=======
+                      <p className="text-sm font-medium text-gray-400">Response Time</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                       <p className="text-2xl font-bold text-gray-200">0.23s</p>
                       <p className="text-xs text-green-400">-15% faster</p>
                     </div>
@@ -1455,9 +1688,13 @@ export default function AnalyticsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
+<<<<<<< HEAD
                       <p className="text-sm font-medium text-gray-400">
                         Uptime
                       </p>
+=======
+                      <p className="text-sm font-medium text-gray-400">Uptime</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                       <p className="text-2xl font-bold text-gray-200">99.9%</p>
                       <p className="text-xs text-green-400">+0.1% improved</p>
                     </div>
@@ -1471,9 +1708,13 @@ export default function AnalyticsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
+<<<<<<< HEAD
                       <p className="text-sm font-medium text-gray-400">
                         AI Accuracy
                       </p>
+=======
+                      <p className="text-sm font-medium text-gray-400">AI Accuracy</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                       <p className="text-2xl font-bold text-gray-200">94.2%</p>
                       <p className="text-xs text-green-400">+2.1% improved</p>
                     </div>
@@ -1487,9 +1728,13 @@ export default function AnalyticsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
+<<<<<<< HEAD
                       <p className="text-sm font-medium text-gray-400">
                         Error Rate
                       </p>
+=======
+                      <p className="text-sm font-medium text-gray-400">Error Rate</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                       <p className="text-2xl font-bold text-gray-200">0.8%</p>
                       <p className="text-xs text-red-400">+0.2% increased</p>
                     </div>
@@ -1506,9 +1751,13 @@ export default function AnalyticsPage() {
               <Card className="bg-card border-border">
                 <CardHeader>
                   <CardTitle className="text-gray-200">System Load</CardTitle>
+<<<<<<< HEAD
                   <CardDescription className="text-gray-400">
                     Real-time system resource usage
                   </CardDescription>
+=======
+                  <CardDescription className="text-gray-400">Real-time system resource usage</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -1526,9 +1775,13 @@ export default function AnalyticsPage() {
                         <span className="text-gray-200 font-medium">67%</span>
                       </div>
                       <Progress value={67} className="h-3" />
+<<<<<<< HEAD
                       <p className="text-xs text-yellow-500 mt-1">
                         Moderate usage
                       </p>
+=======
+                      <p className="text-xs text-yellow-500 mt-1">Moderate usage</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
@@ -1552,12 +1805,17 @@ export default function AnalyticsPage() {
 
               <Card className="bg-card border-border">
                 <CardHeader>
+<<<<<<< HEAD
                   <CardTitle className="text-gray-200">
                     AI Performance Metrics
                   </CardTitle>
                   <CardDescription className="text-gray-400">
                     AI system performance indicators
                   </CardDescription>
+=======
+                  <CardTitle className="text-gray-200">AI Performance Metrics</CardTitle>
+                  <CardDescription className="text-gray-400">AI system performance indicators</CardDescription>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -1567,9 +1825,13 @@ export default function AnalyticsPage() {
                         <span className="text-gray-200 font-medium">94%</span>
                       </div>
                       <Progress value={94} className="h-3" />
+<<<<<<< HEAD
                       <p className="text-xs text-green-500 mt-1">
                         Excellent performance
                       </p>
+=======
+                      <p className="text-xs text-green-500 mt-1">Excellent performance</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
@@ -1577,6 +1839,7 @@ export default function AnalyticsPage() {
                         <span className="text-gray-200 font-medium">87%</span>
                       </div>
                       <Progress value={87} className="h-3" />
+<<<<<<< HEAD
                       <p className="text-xs text-green-500 mt-1">
                         Good performance
                       </p>
@@ -1592,6 +1855,17 @@ export default function AnalyticsPage() {
                       <p className="text-xs text-green-500 mt-1">
                         Very good performance
                       </p>
+=======
+                      <p className="text-xs text-green-500 mt-1">Good performance</p>
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-gray-300">Language Processing</span>
+                        <span className="text-gray-200 font-medium">91%</span>
+                      </div>
+                      <Progress value={91} className="h-3" />
+                      <p className="text-xs text-green-500 mt-1">Very good performance</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
@@ -1599,9 +1873,13 @@ export default function AnalyticsPage() {
                         <span className="text-gray-200 font-medium">96%</span>
                       </div>
                       <Progress value={96} className="h-3" />
+<<<<<<< HEAD
                       <p className="text-xs text-green-500 mt-1">
                         Outstanding accuracy
                       </p>
+=======
+                      <p className="text-xs text-green-500 mt-1">Outstanding accuracy</p>
+>>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                     </div>
                   </div>
                 </CardContent>
