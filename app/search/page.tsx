@@ -1,12 +1,7 @@
 "use client";
 
 import type React from "react";
-<<<<<<< HEAD
-
-import { useState, useRef } from "react";
-=======
 import { useState, useRef, useEffect } from "react";
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,11 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-<<<<<<< HEAD
-import { toast } from "@/hooks/use-toast";
-=======
 import { toast } from "sonner";
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 import {
   Search,
   FileText,
@@ -56,10 +47,6 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import Link from "next/link";
-<<<<<<< HEAD
-
-export default function SearchPage() {
-=======
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
@@ -68,21 +55,14 @@ export default function SearchPage() {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
 
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [chatMessage, setChatMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
-<<<<<<< HEAD
-  const [isTyping, setIsTyping] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [chatMessages, setChatMessages] = useState([
-=======
   const [isChatLoading, setIsChatLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [chatMessages, setChatMessages] = useState<any[]>([
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
     {
       id: 1,
       type: "assistant",
@@ -150,16 +130,11 @@ export default function SearchPage() {
     "guidelines",
   ];
 
-<<<<<<< HEAD
-  const handleSendMessage = () => {
-    if (!chatMessage.trim()) return;
-=======
   useEffect(() => {
     if (!isAuthLoading && !isAuthenticated) {
       router.push("/login");
     }
   }, [isAuthLoading, isAuthenticated, router]);
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim()) return;
@@ -171,24 +146,6 @@ export default function SearchPage() {
       timestamp: new Date(),
     };
 
-<<<<<<< HEAD
-    setChatMessages([...chatMessages, newMessage]);
-    setChatMessage("");
-    setIsTyping(true);
-
-    // Simulate AI response with typing indicator
-    setTimeout(() => {
-      setIsTyping(false);
-      const aiResponse = {
-        id: chatMessages.length + 2,
-        type: "assistant",
-        content:
-          "I understand you're looking for information. Let me search through our document database to find the most relevant results for your query. Based on your request, I found several documents that might be helpful.",
-        timestamp: new Date(),
-      };
-      setChatMessages((prev) => [...prev, aiResponse]);
-    }, 2000);
-=======
     setChatMessages((prev) => [...prev, newUserMessage]);
     const currentQuery = chatMessage;
     setChatMessage("");
@@ -219,26 +176,11 @@ export default function SearchPage() {
     } finally {
       setIsChatLoading(false);
     }
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
   };
 
   const handleVoiceRecord = () => {
     setIsRecording(!isRecording);
-<<<<<<< HEAD
-    if (!isRecording) {
-      toast({
-        title: "Voice Recording",
-        description: "Recording started. Speak your query...",
-      });
-    } else {
-      toast({
-        title: "Voice Recording",
-        description: "Recording stopped and processed.",
-      });
-    }
-=======
     // Placeholder for voice recording logic
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
   };
 
   const handleFileAttach = () => {
@@ -248,26 +190,12 @@ export default function SearchPage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-<<<<<<< HEAD
-      toast({
-        title: "File Attached",
-        description: `${file.name} has been attached to your message.`,
-      });
-=======
       toast.info(`File "${file.name}" attached.`);
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
     }
   };
 
   const copyMessage = (content: string) => {
     navigator.clipboard.writeText(content);
-<<<<<<< HEAD
-    toast({
-      title: "Copied",
-      description: "Message copied to clipboard.",
-    });
-  };
-=======
     toast.success("Message copied to clipboard.");
   };
 
@@ -278,7 +206,6 @@ export default function SearchPage() {
       </div>
     );
   }
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
 
   return (
     <div className="min-h-screen bg-background">
@@ -328,10 +255,6 @@ export default function SearchPage() {
           </p>
         </div>
 
-<<<<<<< HEAD
-        {/* Advanced Search */}
-=======
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
         <Card className="mb-8 bg-card border-border">
           <CardHeader>
             <CardTitle className="flex items-center text-gray-200">
@@ -387,10 +310,6 @@ export default function SearchPage() {
                     <SelectItem value="procedure">Procedure</SelectItem>
                   </SelectContent>
                 </Select>
-<<<<<<< HEAD
-
-=======
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                 <Button
                   variant="outline"
                   className="w-full bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800"
@@ -405,11 +324,7 @@ export default function SearchPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
-<<<<<<< HEAD
-            <Tabs defaultValue="results" className="w-full">
-=======
             <Tabs defaultValue="ai-chat" className="w-full">
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
               <TabsList className="grid w-full grid-cols-2 bg-card border border-border">
                 <TabsTrigger
                   value="results"
@@ -445,257 +360,6 @@ export default function SearchPage() {
                     </div>
                   </div>
 
-<<<<<<< HEAD
-              <TabsContent value="results" className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <p className="text-gray-400">
-                    Found {searchResults.length} results in 0.23 seconds
-                  </p>
-                  <Select defaultValue="relevance">
-                    <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-gray-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="relevance">
-                        Sort by Relevance
-                      </SelectItem>
-                      <SelectItem value="date">Sort by Date</SelectItem>
-                      <SelectItem value="department">
-                        Sort by Department
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {searchResults.map((result) => (
-                  <Card
-                    key={result.id}
-                    className="hover:shadow-lg transition-all duration-300 bg-card border-border hover:border-primary/50"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold mb-1 hover:text-primary cursor-pointer text-gray-200">
-                            {result.title}
-                          </h3>
-                          <p className="text-gray-400 mb-4">{result.content}</p>
-
-                          <div className="flex items-center space-x-4 text-sm text-gray-400 mb-3">
-                            <div className="flex items-center">
-                              <Building className="h-4 w-4 mr-1" />
-                              {result.department}
-                            </div>
-                            <div className="flex items-center">
-                              <FileText className="h-4 w-4 mr-1" />
-                              {result.type}
-                            </div>
-                            <div className="flex items-center">
-                              <Calendar className="h-4 w-4 mr-1" />
-                              {result.date}
-                            </div>
-                            <div className="flex items-center">
-                              <User className="h-4 w-4 mr-1" />
-                              {result.author}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center space-x-2 mb-3">
-                            {result.tags.map((tag, index) => (
-                              <Badge
-                                key={index}
-                                variant="secondary"
-                                className="text-xs bg-gray-700 text-gray-300"
-                              >
-                                <Tag className="h-3 w-3 mr-1" />
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col items-end space-y-2 ml-4">
-                          <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 text-yellow-500" />
-                            <span className="text-sm font-medium text-gray-300">
-                              {result.relevance}%
-                            </span>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700"
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-
-              <TabsContent value="ai-chat" className="space-y-6">
-                {/* ChatGPT-style AI Chat Interface */}
-                <div className="flex flex-col h-[600px] bg-card border border-border rounded-lg">
-                  {/* Chat Header */}
-                  <div className="flex items-center justify-between p-4 border-b border-border">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                        <Bot className="h-4 w-4 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-gray-200">
-                          KMRL Chakra AI
-                        </h3>
-                        <p className="text-xs text-gray-400">Always online</p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-400 hover:text-gray-200"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  {/* Chat Messages */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {chatMessages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`flex ${
-                          message.type === "user"
-                            ? "justify-end"
-                            : "justify-start"
-                        }`}
-                      >
-                        <div
-                          className={`max-w-[80%] ${
-                            message.type === "user" ? "order-2" : "order-1"
-                          }`}
-                        >
-                          {message.type === "assistant" && (
-                            <div className="flex items-center mb-2">
-                              <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center mr-2">
-                                <Bot className="h-3 w-3 text-primary-foreground" />
-                              </div>
-                              <span className="text-xs text-gray-400">
-                                KMRL Chakra AI
-                              </span>
-                            </div>
-                          )}
-                          <div
-                            className={`${
-                              message.type === "user"
-                                ? "bg-primary text-primary-foreground ml-auto"
-                                : "bg-gray-800 text-gray-200"
-                            } p-3 rounded-2xl ${
-                              message.type === "user"
-                                ? "rounded-br-md"
-                                : "rounded-bl-md"
-                            }`}
-                          >
-                            <p className="text-sm leading-relaxed">
-                              {message.content}
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between mt-2">
-                            <p className="text-xs text-gray-500">
-                              {message.timestamp.toLocaleTimeString()}
-                            </p>
-                            {message.type === "assistant" && (
-                              <div className="flex items-center space-x-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 w-6 p-0 text-gray-400 hover:text-gray-200"
-                                  onClick={() => copyMessage(message.content)}
-                                >
-                                  <Copy className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 w-6 p-0 text-gray-400 hover:text-gray-200"
-                                >
-                                  <Volume2 className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 w-6 p-0 text-gray-400 hover:text-green-400"
-                                >
-                                  <ThumbsUp className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 w-6 p-0 text-gray-400 hover:text-red-400"
-                                >
-                                  <ThumbsDown className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-
-                    {/* Typing Indicator */}
-                    {isTyping && (
-                      <div className="flex justify-start">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                            <Bot className="h-3 w-3 text-primary-foreground" />
-                          </div>
-                          <div className="bg-gray-800 p-3 rounded-2xl rounded-bl-md">
-                            <div className="flex space-x-1">
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                              <div
-                                className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                                style={{ animationDelay: "0.1s" }}
-                              ></div>
-                              <div
-                                className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                                style={{ animationDelay: "0.2s" }}
-                              ></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* ChatGPT-style Input */}
-                  <div className="p-4 border-t border-border">
-                    <div className="relative">
-                      <div className="flex items-end space-x-2 p-3 border border-border rounded-2xl bg-gray-800 focus-within:border-primary transition-colors">
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={handleFileChange}
-                          className="hidden"
-                          accept="image/*,.pdf,.doc,.docx,.txt"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gray-400 hover:text-gray-200 p-2"
-                          onClick={handleFileAttach}
-                        >
-                          <Paperclip className="h-4 w-4" />
-                        </Button>
-=======
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {chatMessages.map((message) => (
                       <div
@@ -788,7 +452,6 @@ export default function SearchPage() {
                   <div className="p-4 border-t border-border">
                     <div className="relative">
                       <div className="flex items-end space-x-2 p-3 border border-border rounded-2xl bg-gray-800 focus-within:border-primary transition-colors">
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                         <textarea
                           placeholder="Message KMRL Chakra AI..."
                           value={chatMessage}
@@ -802,23 +465,6 @@ export default function SearchPage() {
                           className="flex-1 bg-transparent text-gray-200 placeholder-gray-400 border-0 resize-none focus:ring-0 focus:outline-none min-h-[20px] max-h-32"
                           rows={1}
                         />
-<<<<<<< HEAD
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`text-gray-400 hover:text-gray-200 p-2 ${
-                            isRecording ? "text-red-400" : ""
-                          }`}
-                          onClick={handleVoiceRecord}
-                        >
-                          {isRecording ? (
-                            <StopCircle className="h-4 w-4" />
-                          ) : (
-                            <Mic className="h-4 w-4" />
-                          )}
-                        </Button>
-=======
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                         <Button
                           onClick={handleSendMessage}
                           disabled={!chatMessage.trim() || isChatLoading}
@@ -829,22 +475,12 @@ export default function SearchPage() {
                         </Button>
                       </div>
                     </div>
-<<<<<<< HEAD
-                    <p className="text-xs text-gray-500 mt-2 text-center">
-                      AI can make mistakes. Check important info.
-                    </p>
-=======
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
                   </div>
                 </div>
               </TabsContent>
             </Tabs>
           </div>
           <div className="space-y-6">
-<<<<<<< HEAD
-            {/* Recent Searches */}
-=======
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
             <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center text-gray-200">
@@ -869,10 +505,6 @@ export default function SearchPage() {
               </CardContent>
             </Card>
 
-<<<<<<< HEAD
-            {/* Popular Tags */}
-=======
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
             <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center text-gray-200">
@@ -895,47 +527,6 @@ export default function SearchPage() {
                 </div>
               </CardContent>
             </Card>
-<<<<<<< HEAD
-
-            {/* Search Tips */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="text-gray-200">Search Tips</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <p className="font-medium text-gray-200">
-                      Natural Language
-                    </p>
-                    <p className="text-gray-400">
-                      Ask questions like "What are the safety procedures?"
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-200">Use Filters</p>
-                    <p className="text-gray-400">
-                      Narrow down results by department and document type
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-200">AI Assistant</p>
-                    <p className="text-gray-400">
-                      Chat with our AI for personalized help and file
-                      attachments
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-200">Voice Search</p>
-                    <p className="text-gray-400">
-                      Use voice commands for hands-free searching
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-=======
->>>>>>> 3a180698cd7e533f2736ea3ce110f056ed105413
           </div>
         </div>
       </div>
