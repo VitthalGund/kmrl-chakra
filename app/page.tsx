@@ -8,8 +8,8 @@ export default function HomePage() {
   return (
     <GradientShell>
       <section className="mt-8 text-center">
-        <div className="surface-card rounded-2xl px-6 py-10">
-          <h1 className="text-balance text-3xl md:text-5xl font-semibold">
+        <div className="text-black surface-card rounded-2xl px-6 py-10">
+          <h1 className="text-balance text-3xl font-semibold md:text-5xl">
             KMRL‑Synapse
           </h1>
           <p className="mt-3 text-pretty opacity-90 md:text-lg">
@@ -39,13 +39,6 @@ export default function HomePage() {
       <FeatureCards />
 
       <ImageSection
-        src="/images/metro-map.png"
-        alt="Kochi Metro network map with all the stations and routes"
-        title="Explore the Kochi Metro Network"
-        body="An overview of all the metro lines and stations in Kochi. Plan your journey and stay informed about the metro routes."
-      />
-
-      <ImageSection
         reverse
         src="/images/metro-illustration.png"
         alt="Illustrated metro ecosystem with city, people, and greenery"
@@ -53,17 +46,23 @@ export default function HomePage() {
         body="A unified experience: search, role-aware summaries, and gentle notifications keep your day flowing without information overload."
       />
 
-      <section id="about" className="mt-12 surface-card rounded-2xl p-6">
-        <h2 className="text-2xl font-semibold">About</h2>
-        <p className="mt-2 text-sm opacity-90">
+      <section
+        id="about"
+        className="mt-20 rounded-3xl bg-slate-100/90 p-8 backdrop-blur-sm"
+      >
+        <h2 className="text-2xl font-bold text-slate-800">About</h2>
+        <p className="mt-2 text-slate-600">
           KMRL‑Synapse is a demo showcase built to illustrate how AI can bring
           order to operational documents and updates.
         </p>
       </section>
 
-      <section id="contact" className="mt-6 surface-card rounded-2xl p-6">
-        <h2 className="text-2xl font-semibold">Contact</h2>
-        <p className="mt-2 text-sm opacity-90">
+      <section
+        id="contact"
+        className="mt-8 rounded-3xl bg-slate-100/90 p-8 backdrop-blur-sm"
+      >
+        <h2 className="text-2xl font-bold text-slate-800">Contact</h2>
+        <p className="mt-2 text-slate-600">
           Reach us via the GitHub link in the footer.
         </p>
       </section>

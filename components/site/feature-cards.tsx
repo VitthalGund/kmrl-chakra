@@ -27,7 +27,10 @@ export function FeatureCards() {
   return (
     <div className="mt-10 grid gap-4 md:grid-cols-2">
       {items.map(({ icon: Icon, title, body }) => (
-        <Card key={title} className="bg-card/80 backdrop-blur-sm border">
+        <Card
+          key={title}
+          className="bg-slate-100/90 text-black backdrop-blur-sm border"
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Icon className="h-5 w-5" /> {title}

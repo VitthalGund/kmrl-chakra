@@ -11,7 +11,7 @@ export function ImageSection({ src, alt, title, body, reverse }: Props) {
   return (
     <section className="mt-10">
       <div
-        className={`bg-card/80 backdrop-blur-sm border rounded-2xl p-4 md:p-6 grid gap-6 md:grid-cols-2 items-center ${
+        className={`bg-slate-100/90 text-black backdrop-blur-sm border rounded-2xl p-4 md:p-6 grid gap-6 md:grid-cols-2 items-center ${
           reverse ? "md:[&>div:first-child]:order-2" : ""
         }`}
       >

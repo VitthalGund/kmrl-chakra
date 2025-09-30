@@ -42,7 +42,7 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50">
       <nav className="mx-auto max-w-6xl px-4 py-3">
-        <div className="bg-card/80 backdrop-blur-sm border rounded-xl px-4 py-2 flex items-center justify-between">
+        <div className="bg-slate-100/90 text-black backdrop-blur-sm border rounded-xl px-4 py-2 flex items-center justify-between">
           <Link href="/" className="font-semibold tracking-tight text-pretty">
             <span className="sr-only">KMRL-Synapse</span>
             <div className="flex items-center gap-2">
