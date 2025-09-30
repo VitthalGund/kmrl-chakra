@@ -39,6 +39,13 @@ export default function HomePage() {
       <FeatureCards />
 
       <ImageSection
+        src="/images/metro-map.png"
+        alt="Kochi Metro network map with all the stations and routes"
+        title="Explore the Kochi Metro Network"
+        body="An overview of all the metro lines and stations in Kochi. Plan your journey and stay informed about the metro routes."
+      />
+
+      <ImageSection
         reverse
         src="/images/metro-illustration.png"
         alt="Illustrated metro ecosystem with city, people, and greenery"

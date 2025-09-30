@@ -1,13 +1,17 @@
-import type React from "react"
-import { Nav } from "./nav"
-import { Footer } from "./footer"
+import type React from "react";
+import { Nav } from "./nav";
+import { Footer } from "./footer";
 
-export default function GradientShell({ children }: { children: React.ReactNode }) {
+export default function GradientShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="min-h-screen bg-kmrl text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-background text-foreground">
       <Nav />
       <main className="mx-auto max-w-6xl px-4">{children}</main>
       <Footer />
     </div>
-  )
+  );
 }

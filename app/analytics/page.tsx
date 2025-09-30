@@ -1,11 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,
   Users,
@@ -23,8 +29,8 @@ import {
   AlertCircle,
   RefreshCw,
   TrendingDown,
-} from "lucide-react"
-import Link from "next/link"
+} from "lucide-react";
+import Link from "next/link";
 import {
   LineChart,
   Line,
@@ -43,35 +49,77 @@ import {
   ResponsiveContainer,
   RadialBarChart,
   RadialBar,
-} from "recharts"
+} from "recharts";
 
 export default function AnalyticsPage() {
-  const [selectedTimeRange, setSelectedTimeRange] = useState("6months")
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [selectedTimeRange, setSelectedTimeRange] = useState("6months");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const monthlyData = [
-    { month: "Jan", documents: 245, queries: 1200, users: 89, downloads: 456, searches: 890 },
-    { month: "Feb", documents: 289, queries: 1450, users: 95, downloads: 523, searches: 1020 },
-    { month: "Mar", documents: 312, queries: 1680, users: 102, downloads: 612, searches: 1180 },
-    { month: "Apr", documents: 356, queries: 1890, users: 108, downloads: 698, searches: 1340 },
-    { month: "May", documents: 398, queries: 2100, users: 115, downloads: 756, searches: 1520 },
-    { month: "Jun", documents: 445, queries: 2350, users: 122, downloads: 834, searches: 1680 },
-  ]
+    {
+      month: "Jan",
+      documents: 245,
+      queries: 1200,
+      users: 89,
+      downloads: 456,
+      searches: 890,
+    },
+    {
+      month: "Feb",
+      documents: 289,
+      queries: 1450,
+      users: 95,
+      downloads: 523,
+      searches: 1020,
+    },
+    {
+      month: "Mar",
+      documents: 312,
+      queries: 1680,
+      users: 102,
+      downloads: 612,
+      searches: 1180,
+    },
+    {
+      month: "Apr",
+      documents: 356,
+      queries: 1890,
+      users: 108,
+      downloads: 698,
+      searches: 1340,
+    },
+    {
+      month: "May",
+      documents: 398,
+      queries: 2100,
+      users: 115,
+      downloads: 756,
+      searches: 1520,
+    },
+    {
+      month: "Jun",
+      documents: 445,
+      queries: 2350,
+      users: 122,
+      downloads: 834,
+      searches: 1680,
+    },
+  ];
 
   const departmentData = [
-    { name: "Operations", value: 35, color: "#10b981", users: 45 },
-    { name: "Maintenance", value: 25, color: "#3b82f6", users: 32 },
-    { name: "Safety", value: 20, color: "#f59e0b", users: 28 },
-    { name: "HR", value: 12, color: "#ef4444", users: 18 },
-    { name: "Finance", value: 8, color: "#8b5cf6", users: 12 },
-  ]
+    { name: "Operations", value: 35, color: "var(--chart-1)", users: 45 },
+    { name: "Maintenance", value: 25, color: "var(--chart-2)", users: 32 },
+    { name: "Safety", value: 20, color: "var(--chart-3)", users: 28 },
+    { name: "HR", value: 12, color: "var(--chart-4)", users: 18 },
+    { name: "Finance", value: 8, color: "var(--chart-5)", users: 12 },
+  ];
 
   const performanceData = [
-    { name: "Response Time", value: 95, color: "#10b981" },
-    { name: "Uptime", value: 99, color: "#3b82f6" },
-    { name: "AI Accuracy", value: 94, color: "#f59e0b" },
-    { name: "User Satisfaction", value: 92, color: "#8b5cf6" },
-  ]
+    { name: "Response Time", value: 95, color: "var(--chart-1)" },
+    { name: "Uptime", value: 99, color: "var(--chart-2)" },
+    { name: "AI Accuracy", value: 94, color: "var(--chart-3)" },
+    { name: "User Satisfaction", value: 92, color: "var(--chart-4)" },
+  ];
 
   const documentTypes = [
     { type: "Policies", count: 45, percentage: 30, trend: "+5%" },
@@ -79,15 +127,30 @@ export default function AnalyticsPage() {
     { type: "Reports", count: 32, percentage: 21, trend: "-2%" },
     { type: "Training", count: 22, percentage: 15, trend: "+8%" },
     { type: "Procedures", count: 13, percentage: 9, trend: "+3%" },
-  ]
+  ];
 
   const topDocuments = [
     { title: "Safety Protocol 2025", views: 1250, downloads: 234, rating: 4.8 },
-    { title: "Emergency Response Plan", views: 1156, downloads: 198, rating: 4.7 },
-    { title: "Train Maintenance Manual", views: 890, downloads: 167, rating: 4.6 },
+    {
+      title: "Emergency Response Plan",
+      views: 1156,
+      downloads: 198,
+      rating: 4.7,
+    },
+    {
+      title: "Train Maintenance Manual",
+      views: 890,
+      downloads: 167,
+      rating: 4.6,
+    },
     { title: "Employee Handbook", views: 678, downloads: 145, rating: 4.5 },
-    { title: "Customer Service Guide", views: 567, downloads: 123, rating: 4.4 },
-  ]
+    {
+      title: "Customer Service Guide",
+      views: 567,
+      downloads: 123,
+      rating: 4.4,
+    },
+  ];
 
   const kpiData = [
     {
@@ -122,30 +185,30 @@ export default function AnalyticsPage() {
       icon: <Zap className="h-6 w-6 text-orange-600" />,
       description: "Overall performance",
     },
-  ]
+  ];
 
   const handleRefresh = async () => {
-    setIsRefreshing(true)
+    setIsRefreshing(true);
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsRefreshing(false)
-  }
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setIsRefreshing(false);
+  };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium text-gray-200">{`${label}`}</p>
+          <p className="text-sm font-medium text-muted-foreground">{`${label}`}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm" style={{ color: entry.color }}>
               {`${entry.dataKey}: ${entry.value.toLocaleString()}`}
             </p>
           ))}
         </div>
-      )
+      );
     }
-    return null
-  }
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,23 +219,37 @@ export default function AnalyticsPage() {
             <div className="flex items-center space-x-3">
               <Link href="/dashboard" className="flex items-center space-x-2">
                 <Train className="h-6 w-6 text-primary" />
-                <span className="font-bold text-lg text-gray-200">KMRL Chakra</span>
+                <span className="font-bold text-lg text-foreground">
+                  KMRL Chakra
+                </span>
               </Link>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/dashboard" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/dashboard"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 Dashboard
               </Link>
-              <Link href="/documents" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/documents"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 Documents
               </Link>
-              <Link href="/search" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/search"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 Search
               </Link>
               <Link href="/analytics" className="text-primary font-medium">
                 Analytics
               </Link>
-              <Link href="/settings" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/settings"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 Settings
               </Link>
             </nav>
@@ -182,9 +259,12 @@ export default function AnalyticsPage() {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className="bg-transparent border-gray-600 text-gray-300"
               >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+                <RefreshCw
+                  className={`h-4 w-4 mr-2 ${
+                    isRefreshing ? "animate-spin" : ""
+                  }`}
+                />
                 Refresh
               </Button>
               <Button asChild>
@@ -200,20 +280,23 @@ export default function AnalyticsPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2 text-gray-200">Analytics Dashboard</h1>
-              <p className="text-gray-400">
-                Comprehensive insights into document usage, system performance, and user engagement.
+              <h1 className="text-3xl font-bold mb-2 text-foreground">
+                Analytics Dashboard
+              </h1>
+              <p className="text-muted-foreground">
+                Comprehensive insights into document usage, system performance,
+                and user engagement.
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+              <Badge variant="secondary">
                 <Activity className="h-3 w-3 mr-1" />
                 Live Data
               </Badge>
               <select
                 value={selectedTimeRange}
                 onChange={(e) => setSelectedTimeRange(e.target.value)}
-                className="bg-card border border-border rounded-md px-3 py-2 text-sm text-gray-300"
+                className="bg-card border border-border rounded-md px-3 py-2 text-sm text-muted-foreground"
               >
                 <option value="7days">Last 7 days</option>
                 <option value="30days">Last 30 days</option>
@@ -229,16 +312,22 @@ export default function AnalyticsPage() {
           {kpiData.map((kpi, index) => (
             <Card
               key={index}
-              className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-card border-border"
+              className="hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-400">{kpi.title}</p>
-                    <p className="text-3xl font-bold text-gray-200 mt-1">{kpi.value}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {kpi.title}
+                    </p>
+                    <p className="text-3xl font-bold text-foreground mt-1">
+                      {kpi.value}
+                    </p>
                     <div className="flex items-center mt-2">
                       <p
-                        className={`text-sm flex items-center ${kpi.trend === "up" ? "text-green-400" : "text-red-400"}`}
+                        className={`text-sm flex items-center ${
+                          kpi.trend === "up" ? "text-green-500" : "text-red-500"
+                        }`}
                       >
                         {kpi.trend === "up" ? (
                           <TrendingUp className="h-4 w-4 mr-1" />
@@ -248,9 +337,11 @@ export default function AnalyticsPage() {
                         {kpi.change}
                       </p>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">{kpi.description}</p>
+                    <p className="text-xs text-muted-foreground/50 mt-1">
+                      {kpi.description}
+                    </p>
                   </div>
-                  <div className="ml-4 p-3 bg-gray-800 rounded-lg">{kpi.icon}</div>
+                  <div className="ml-4 p-3 bg-muted rounded-lg">{kpi.icon}</div>
                 </div>
               </CardContent>
             </Card>
@@ -258,74 +349,71 @@ export default function AnalyticsPage() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-card border border-border">
-            <TabsTrigger
-              value="overview"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Overview
-            </TabsTrigger>
-            <TabsTrigger
-              value="documents"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Documents
-            </TabsTrigger>
-            <TabsTrigger
-              value="users"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Users
-            </TabsTrigger>
-            <TabsTrigger
-              value="performance"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-            >
-              Performance
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="performance">Performance</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Enhanced Monthly Trends */}
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">Monthly Trends</CardTitle>
-                  <CardDescription className="text-gray-400">
+                  <CardTitle className="text-foreground">
+                    Monthly Trends
+                  </CardTitle>
+                  <CardDescription>
                     Document activity and user engagement over time
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>
                     <LineChart data={monthlyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="month" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--border)"
+                      />
+                      <XAxis dataKey="month" stroke="var(--muted-foreground)" />
+                      <YAxis stroke="var(--muted-foreground)" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
                       <Line
                         type="monotone"
                         dataKey="documents"
-                        stroke="#10b981"
+                        stroke="var(--chart-1)"
                         strokeWidth={3}
-                        dot={{ fill: "#10b981", strokeWidth: 2, r: 6 }}
-                        activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 2 }}
+                        dot={{ fill: "var(--chart-1)", strokeWidth: 2, r: 6 }}
+                        activeDot={{
+                          r: 8,
+                          stroke: "var(--chart-1)",
+                          strokeWidth: 2,
+                        }}
                       />
                       <Line
                         type="monotone"
                         dataKey="queries"
-                        stroke="#3b82f6"
+                        stroke="var(--chart-2)"
                         strokeWidth={3}
-                        dot={{ fill: "#3b82f6", strokeWidth: 2, r: 6 }}
-                        activeDot={{ r: 8, stroke: "#3b82f6", strokeWidth: 2 }}
+                        dot={{ fill: "var(--chart-2)", strokeWidth: 2, r: 6 }}
+                        activeDot={{
+                          r: 8,
+                          stroke: "var(--chart-2)",
+                          strokeWidth: 2,
+                        }}
                       />
                       <Line
                         type="monotone"
                         dataKey="users"
-                        stroke="#f59e0b"
+                        stroke="var(--chart-3)"
                         strokeWidth={3}
-                        dot={{ fill: "#f59e0b", strokeWidth: 2, r: 6 }}
-                        activeDot={{ r: 8, stroke: "#f59e0b", strokeWidth: 2 }}
+                        dot={{ fill: "var(--chart-3)", strokeWidth: 2, r: 6 }}
+                        activeDot={{
+                          r: 8,
+                          stroke: "var(--chart-3)",
+                          strokeWidth: 2,
+                        }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -333,10 +421,14 @@ export default function AnalyticsPage() {
               </Card>
 
               {/* Enhanced Department Usage */}
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">Department Usage Distribution</CardTitle>
-                  <CardDescription className="text-gray-400">Document access by department</CardDescription>
+                  <CardTitle className="text-foreground">
+                    Department Usage Distribution
+                  </CardTitle>
+                  <CardDescription>
+                    Document access by department
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>
@@ -346,11 +438,13 @@ export default function AnalyticsPage() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) =>
+                          `${name} ${(percent * 100).toFixed(0)}%`
+                        }
                         outerRadius={120}
                         fill="#8884d8"
                         dataKey="value"
-                        stroke="#1f2937"
+                        stroke="var(--card)"
                         strokeWidth={2}
                       >
                         {departmentData.map((entry, index) => (
@@ -365,14 +459,24 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Performance Radial Chart */}
-            <Card className="bg-card border-border">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-gray-200">System Performance Overview</CardTitle>
-                <CardDescription className="text-gray-400">Key performance indicators at a glance</CardDescription>
+                <CardTitle className="text-foreground">
+                  System Performance Overview
+                </CardTitle>
+                <CardDescription>
+                  Key performance indicators at a glance
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" data={performanceData}>
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="20%"
+                    outerRadius="90%"
+                    data={performanceData}
+                  >
                     <RadialBar
                       minAngle={15}
                       label={{ position: "insideStart", fill: "#fff" }}
@@ -380,7 +484,11 @@ export default function AnalyticsPage() {
                       clockWise
                       dataKey="value"
                     />
-                    <Legend iconSize={18} layout="horizontal" verticalAlign="bottom" />
+                    <Legend
+                      iconSize={18}
+                      layout="horizontal"
+                      verticalAlign="bottom"
+                    />
                     <Tooltip content={<CustomTooltip />} />
                   </RadialBarChart>
                 </ResponsiveContainer>
@@ -388,39 +496,47 @@ export default function AnalyticsPage() {
             </Card>
 
             {/* Enhanced Top Documents */}
-            <Card className="bg-card border-border">
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center text-gray-200">
+                <CardTitle className="flex items-center text-foreground">
                   <Award className="h-5 w-5 mr-2 text-yellow-500" />
                   Top Performing Documents
                 </CardTitle>
-                <CardDescription className="text-gray-400">Most accessed and downloaded documents</CardDescription>
+                <CardDescription>
+                  Most accessed and downloaded documents
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {topDocuments.map((doc, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-gray-800/50 transition-all duration-200 hover:scale-[1.02]"
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-all duration-200 hover:scale-[1.02]"
                     >
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-primary to-blue-600 text-primary-foreground rounded-full text-sm font-bold">
                           {index + 1}
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-200">{doc.title}</h4>
+                          <h4 className="font-medium text-foreground">
+                            {doc.title}
+                          </h4>
                           <div className="flex items-center space-x-2 mt-1">
                             <div className="flex items-center">
                               {[...Array(5)].map((_, i) => (
                                 <div
                                   key={i}
                                   className={`w-3 h-3 rounded-full ${
-                                    i < Math.floor(doc.rating) ? "bg-yellow-400" : "bg-gray-600"
+                                    i < Math.floor(doc.rating)
+                                      ? "bg-yellow-400"
+                                      : "bg-muted-foreground/50"
                                   }`}
                                 />
                               ))}
                             </div>
-                            <span className="text-sm text-gray-400">{doc.rating}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {doc.rating}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -444,20 +560,35 @@ export default function AnalyticsPage() {
           <TabsContent value="documents" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Enhanced Document Types Distribution */}
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">Document Types Distribution</CardTitle>
-                  <CardDescription className="text-gray-400">Breakdown by document category</CardDescription>
+                  <CardTitle className="text-foreground">
+                    Document Types Distribution
+                  </CardTitle>
+                  <CardDescription>
+                    Breakdown by document category
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {documentTypes.map((type, index) => (
                       <div key={index} className="space-y-2">
                         <div className="flex justify-between items-center text-sm">
-                          <span className="font-medium text-gray-200">{type.type}</span>
+                          <span className="font-medium text-foreground">
+                            {type.type}
+                          </span>
                           <div className="flex items-center space-x-2">
-                            <span className="text-gray-400">{type.count} docs</span>
-                            <Badge variant={type.trend.startsWith("+") ? "default" : "destructive"} className="text-xs">
+                            <span className="text-muted-foreground">
+                              {type.count} docs
+                            </span>
+                            <Badge
+                              variant={
+                                type.trend.startsWith("+")
+                                  ? "default"
+                                  : "destructive"
+                              }
+                              className="text-xs"
+                            >
                               {type.trend}
                             </Badge>
                           </div>
@@ -470,20 +601,33 @@ export default function AnalyticsPage() {
               </Card>
 
               {/* Enhanced Document Activity */}
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">Document Activity</CardTitle>
-                  <CardDescription className="text-gray-400">Monthly document additions and updates</CardDescription>
+                  <CardTitle className="text-foreground">
+                    Document Activity
+                  </CardTitle>
+                  <CardDescription>
+                    Monthly document additions and updates
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={monthlyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="month" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--border)"
+                      />
+                      <XAxis dataKey="month" stroke="var(--muted-foreground)" />
+                      <YAxis stroke="var(--muted-foreground)" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
-                      <Bar dataKey="documents" fill="#10b981" radius={[4, 4, 0, 0]} stroke="#065f46" strokeWidth={1} />
+                      <Bar
+                        dataKey="documents"
+                        fill="var(--chart-1)"
+                        radius={[4, 4, 0, 0]}
+                        stroke="var(--chart-1)"
+                        strokeWidth={1}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -492,44 +636,60 @@ export default function AnalyticsPage() {
 
             {/* Document Insights */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3">
                     <div className="p-3 bg-blue-500/20 rounded-lg">
                       <FileText className="h-8 w-8 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-gray-200">2,847</p>
-                      <p className="text-sm text-gray-400">Total Documents</p>
-                      <p className="text-xs text-green-400 mt-1">+156 this month</p>
+                      <p className="text-2xl font-bold text-foreground">
+                        2,847
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Total Documents
+                      </p>
+                      <p className="text-xs text-green-400 mt-1">
+                        +156 this month
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3">
                     <div className="p-3 bg-green-500/20 rounded-lg">
                       <TrendingUp className="h-8 w-8 text-green-400" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-gray-200">156</p>
-                      <p className="text-sm text-gray-400">Added This Month</p>
-                      <p className="text-xs text-green-400 mt-1">+12% vs last month</p>
+                      <p className="text-2xl font-bold text-foreground">156</p>
+                      <p className="text-sm text-muted-foreground">
+                        Added This Month
+                      </p>
+                      <p className="text-xs text-green-400 mt-1">
+                        +12% vs last month
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3">
                     <div className="p-3 bg-orange-500/20 rounded-lg">
                       <Activity className="h-8 w-8 text-orange-400" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-gray-200">89.3%</p>
-                      <p className="text-sm text-gray-400">Utilization Rate</p>
-                      <p className="text-xs text-green-400 mt-1">+2.1% improvement</p>
+                      <p className="text-2xl font-bold text-foreground">
+                        89.3%
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Utilization Rate
+                      </p>
+                      <p className="text-xs text-green-400 mt-1">
+                        +2.1% improvement
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -540,23 +700,28 @@ export default function AnalyticsPage() {
           <TabsContent value="users" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Enhanced User Activity */}
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">User Activity Trends</CardTitle>
-                  <CardDescription className="text-gray-400">Monthly active user growth</CardDescription>
+                  <CardTitle className="text-foreground">
+                    User Activity Trends
+                  </CardTitle>
+                  <CardDescription>Monthly active user growth</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
                     <AreaChart data={monthlyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="month" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--border)"
+                      />
+                      <XAxis dataKey="month" stroke="var(--muted-foreground)" />
+                      <YAxis stroke="var(--muted-foreground)" />
                       <Tooltip content={<CustomTooltip />} />
                       <Area
                         type="monotone"
                         dataKey="users"
-                        stroke="#8b5cf6"
-                        fill="#8b5cf6"
+                        stroke="var(--chart-2)"
+                        fill="var(--chart-2)"
                         fillOpacity={0.3}
                         strokeWidth={3}
                       />
@@ -566,36 +731,56 @@ export default function AnalyticsPage() {
               </Card>
 
               {/* Enhanced User Engagement */}
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">User Engagement Metrics</CardTitle>
-                  <CardDescription className="text-gray-400">Active user statistics</CardDescription>
+                  <CardTitle className="text-foreground">
+                    User Engagement Metrics
+                  </CardTitle>
+                  <CardDescription>Active user statistics</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-300">Daily Active Users</span>
-                        <span className="text-gray-200 font-medium">342 / 542</span>
+                        <span className="text-muted-foreground">
+                          Daily Active Users
+                        </span>
+                        <span className="text-foreground font-medium">
+                          342 / 542
+                        </span>
                       </div>
                       <Progress value={63} className="h-3" />
-                      <p className="text-xs text-gray-500 mt-1">63% engagement rate</p>
+                      <p className="text-xs text-muted-foreground/50 mt-1">
+                        63% engagement rate
+                      </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-300">Weekly Active Users</span>
-                        <span className="text-gray-200 font-medium">489 / 542</span>
+                        <span className="text-muted-foreground">
+                          Weekly Active Users
+                        </span>
+                        <span className="text-foreground font-medium">
+                          489 / 542
+                        </span>
                       </div>
                       <Progress value={90} className="h-3" />
-                      <p className="text-xs text-gray-500 mt-1">90% engagement rate</p>
+                      <p className="text-xs text-muted-foreground/50 mt-1">
+                        90% engagement rate
+                      </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-300">Monthly Active Users</span>
-                        <span className="text-gray-200 font-medium">542 / 542</span>
+                        <span className="text-muted-foreground">
+                          Monthly Active Users
+                        </span>
+                        <span className="text-foreground font-medium">
+                          542 / 542
+                        </span>
                       </div>
                       <Progress value={100} className="h-3" />
-                      <p className="text-xs text-gray-500 mt-1">100% engagement rate</p>
+                      <p className="text-xs text-muted-foreground/50 mt-1">
+                        100% engagement rate
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -604,43 +789,45 @@ export default function AnalyticsPage() {
 
             {/* User Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6 text-center">
                   <div className="p-3 bg-primary/20 rounded-lg w-fit mx-auto mb-3">
                     <Users className="h-8 w-8 text-primary" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-200">542</p>
-                  <p className="text-sm text-gray-400">Total Users</p>
+                  <p className="text-2xl font-bold text-foreground">542</p>
+                  <p className="text-sm text-muted-foreground">Total Users</p>
                   <p className="text-xs text-green-400 mt-1">+8.7% growth</p>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6 text-center">
                   <div className="p-3 bg-green-500/20 rounded-lg w-fit mx-auto mb-3">
                     <Activity className="h-8 w-8 text-green-400" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-200">342</p>
-                  <p className="text-sm text-gray-400">Daily Active</p>
+                  <p className="text-2xl font-bold text-foreground">342</p>
+                  <p className="text-sm text-muted-foreground">Daily Active</p>
                   <p className="text-xs text-green-400 mt-1">+15% increase</p>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6 text-center">
                   <div className="p-3 bg-blue-500/20 rounded-lg w-fit mx-auto mb-3">
                     <MessageSquare className="h-8 w-8 text-blue-400" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-200">1,234</p>
-                  <p className="text-sm text-gray-400">AI Interactions</p>
+                  <p className="text-2xl font-bold text-foreground">1,234</p>
+                  <p className="text-sm text-muted-foreground">
+                    AI Interactions
+                  </p>
                   <p className="text-xs text-green-400 mt-1">+28% increase</p>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6 text-center">
                   <div className="p-3 bg-orange-500/20 rounded-lg w-fit mx-auto mb-3">
                     <Clock className="h-8 w-8 text-orange-400" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-200">4.2h</p>
-                  <p className="text-sm text-gray-400">Avg. Session</p>
+                  <p className="text-2xl font-bold text-foreground">4.2h</p>
+                  <p className="text-sm text-muted-foreground">Avg. Session</p>
                   <p className="text-xs text-green-400 mt-1">+12% longer</p>
                 </CardContent>
               </Card>
@@ -650,12 +837,16 @@ export default function AnalyticsPage() {
           <TabsContent value="performance" className="space-y-6">
             {/* System Performance */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">Response Time</p>
-                      <p className="text-2xl font-bold text-gray-200">0.23s</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Response Time
+                      </p>
+                      <p className="text-2xl font-bold text-foreground">
+                        0.23s
+                      </p>
                       <p className="text-xs text-green-400">-15% faster</p>
                     </div>
                     <div className="p-3 bg-yellow-500/20 rounded-lg">
@@ -664,12 +855,16 @@ export default function AnalyticsPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">Uptime</p>
-                      <p className="text-2xl font-bold text-gray-200">99.9%</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Uptime
+                      </p>
+                      <p className="text-2xl font-bold text-foreground">
+                        99.9%
+                      </p>
                       <p className="text-xs text-green-400">+0.1% improved</p>
                     </div>
                     <div className="p-3 bg-green-500/20 rounded-lg">
@@ -678,12 +873,16 @@ export default function AnalyticsPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">AI Accuracy</p>
-                      <p className="text-2xl font-bold text-gray-200">94.2%</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        AI Accuracy
+                      </p>
+                      <p className="text-2xl font-bold text-foreground">
+                        94.2%
+                      </p>
                       <p className="text-xs text-green-400">+2.1% improved</p>
                     </div>
                     <div className="p-3 bg-blue-500/20 rounded-lg">
@@ -692,12 +891,14 @@ export default function AnalyticsPage() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-card border-border hover:shadow-lg transition-all duration-300">
+              <Card className="hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">Error Rate</p>
-                      <p className="text-2xl font-bold text-gray-200">0.8%</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Error Rate
+                      </p>
+                      <p className="text-2xl font-bold text-foreground">0.8%</p>
                       <p className="text-xs text-red-400">+0.2% increased</p>
                     </div>
                     <div className="p-3 bg-red-500/20 rounded-lg">
@@ -710,41 +911,53 @@ export default function AnalyticsPage() {
 
             {/* Performance Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">System Load</CardTitle>
-                  <CardDescription className="text-gray-400">Real-time system resource usage</CardDescription>
+                  <CardTitle className="text-foreground">System Load</CardTitle>
+                  <CardDescription>
+                    Real-time system resource usage
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">CPU Usage</span>
-                        <span className="text-gray-200 font-medium">45%</span>
+                        <span className="text-muted-foreground">CPU Usage</span>
+                        <span className="text-foreground font-medium">45%</span>
                       </div>
                       <Progress value={45} className="h-3" />
-                      <p className="text-xs text-gray-500 mt-1">Normal load</p>
+                      <p className="text-xs text-muted-foreground/50 mt-1">
+                        Normal load
+                      </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">Memory Usage</span>
-                        <span className="text-gray-200 font-medium">67%</span>
+                        <span className="text-muted-foreground">
+                          Memory Usage
+                        </span>
+                        <span className="text-foreground font-medium">67%</span>
                       </div>
                       <Progress value={67} className="h-3" />
-                      <p className="text-xs text-yellow-500 mt-1">Moderate usage</p>
+                      <p className="text-xs text-yellow-500 mt-1">
+                        Moderate usage
+                      </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">Storage Usage</span>
-                        <span className="text-gray-200 font-medium">34%</span>
+                        <span className="text-muted-foreground">
+                          Storage Usage
+                        </span>
+                        <span className="text-foreground font-medium">34%</span>
                       </div>
                       <Progress value={34} className="h-3" />
                       <p className="text-xs text-green-500 mt-1">Low usage</p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">Network Usage</span>
-                        <span className="text-gray-200 font-medium">23%</span>
+                        <span className="text-muted-foreground">
+                          Network Usage
+                        </span>
+                        <span className="text-foreground font-medium">23%</span>
                       </div>
                       <Progress value={23} className="h-3" />
                       <p className="text-xs text-green-500 mt-1">Low usage</p>
@@ -753,44 +966,64 @@ export default function AnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-card border-border">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-gray-200">AI Performance Metrics</CardTitle>
-                  <CardDescription className="text-gray-400">AI system performance indicators</CardDescription>
+                  <CardTitle className="text-foreground">
+                    AI Performance Metrics
+                  </CardTitle>
+                  <CardDescription>
+                    AI system performance indicators
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">Query Processing</span>
-                        <span className="text-gray-200 font-medium">94%</span>
+                        <span className="text-muted-foreground">
+                          Query Processing
+                        </span>
+                        <span className="text-foreground font-medium">94%</span>
                       </div>
                       <Progress value={94} className="h-3" />
-                      <p className="text-xs text-green-500 mt-1">Excellent performance</p>
+                      <p className="text-xs text-green-500 mt-1">
+                        Excellent performance
+                      </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">Document Indexing</span>
-                        <span className="text-gray-200 font-medium">87%</span>
+                        <span className="text-muted-foreground">
+                          Document Indexing
+                        </span>
+                        <span className="text-foreground font-medium">87%</span>
                       </div>
                       <Progress value={87} className="h-3" />
-                      <p className="text-xs text-green-500 mt-1">Good performance</p>
+                      <p className="text-xs text-green-500 mt-1">
+                        Good performance
+                      </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">Language Processing</span>
-                        <span className="text-gray-200 font-medium">91%</span>
+                        <span className="text-muted-foreground">
+                          Language Processing
+                        </span>
+                        <span className="text-foreground font-medium">91%</span>
                       </div>
                       <Progress value={91} className="h-3" />
-                      <p className="text-xs text-green-500 mt-1">Very good performance</p>
+                      <p className="text-xs text-green-500 mt-1">
+                        Very good performance
+                      </p>
                     </div>
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-300">Response Accuracy</span>
-                        <span className="text-gray-200 font-medium">96%</span>
+                        <span className="text-muted-foreground">
+                          Response Accuracy
+                        </span>
+                        <span className="text-foreground font-medium">96%</span>
                       </div>
                       <Progress value={96} className="h-3" />
-                      <p className="text-xs text-green-500 mt-1">Outstanding accuracy</p>
+                      <p className="text-xs text-green-500 mt-1">
+                        Outstanding accuracy
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -800,5 +1033,5 @@ export default function AnalyticsPage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Bell, Languages, Search, Upload } from "lucide-react"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Bell, Languages, Search, Upload } from "lucide-react";
 
 export function FeatureCards() {
   const items = [
@@ -23,11 +23,11 @@ export function FeatureCards() {
       title: "Multilingual",
       body: "English and Malayalam interface and summaries for inclusive access.",
     },
-  ]
+  ];
   return (
     <div className="mt-10 grid gap-4 md:grid-cols-2">
       {items.map(({ icon: Icon, title, body }) => (
-        <Card key={title} className="surface-card">
+        <Card key={title} className="bg-card/80 backdrop-blur-sm border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Icon className="h-5 w-5" /> {title}
@@ -39,5 +39,5 @@ export function FeatureCards() {
         </Card>
       ))}
     </div>
-  )
+  );
 }
