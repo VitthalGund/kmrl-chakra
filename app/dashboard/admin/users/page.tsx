@@ -1,32 +1,24 @@
+// app/dashboard/admin/users/page.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
 import {
-  Train,
-  Shield,
-  Users,
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
+  Mail,
+  Building,
   MoreHorizontal,
   UserCheck,
   UserX,
-  Calendar,
-  Mail,
-  Phone,
-  Building,
-  Activity,
-  Download,
-  Upload,
+  Trash2,
+  Loader2,
   ChevronLeft,
   ChevronRight,
-  Loader2,
+  Search,
+  Shield,
+  Train,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -35,7 +27,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,9 +44,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { apiClient, User } from "@/lib/api"; // CORRECTED IMPORT
+import { apiClient, User } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AdminUsersPage() {
   const {
@@ -68,26 +61,19 @@ export default function AdminUsersPage() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  // State for filters and pagination
   const [filters, setFilters] = useState({
     status: "all",
     role: "all",
     department: "all",
   });
-  const [pagination, setPagination] = useState({
-    skip: 0,
-    limit: 5,
-  });
+  const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
 
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
       const statusFilter =
         filters.status !== "all" ? filters.status : undefined;
-      // CORRECTED API CALL: Using apiClient and passing filters correctly
       const response = await apiClient.getAdminUsers(statusFilter);
-      // NOTE: The current backend doesn't support full filtering and pagination for this endpoint yet.
-      // This frontend code is ready for when it does. We will simulate for now.
       setUsers(response.users);
       setTotalUsers(response.total);
     } catch (error) {
@@ -100,19 +86,15 @@ export default function AdminUsersPage() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchUsers();
-    }
+    if (isAuthenticated) fetchUsers();
   }, [isAuthenticated, filters, pagination]);
 
   useEffect(() => {
-    if (!authLoading) {
-      if (!isAuthenticated || currentUser?.role !== "Admin") {
-        toast.error("Access Denied", {
-          description: "You must be an admin to view this page.",
-        });
-        router.push("/dashboard");
-      }
+    if (!authLoading && (!isAuthenticated || currentUser?.role !== "Admin")) {
+      toast.error("Access Denied", {
+        description: "You must be an admin to view this page.",
+      });
+      router.push("/dashboard");
     }
   }, [authLoading, isAuthenticated, currentUser, router]);
 
@@ -124,18 +106,15 @@ export default function AdminUsersPage() {
     const toastId = toast.loading(`Processing action for ${userName}...`);
     try {
       if (action === "approve") {
-        await apiClient.approveUser(userEmail, "User"); // CORRECTED API CALL
+        await apiClient.approveUser(userEmail, "User");
       } else {
-        await apiClient.rejectUser(userEmail); // CORRECTED API CALL
+        await apiClient.rejectUser(userEmail);
       }
       toast.success(
         `${action.charAt(0).toUpperCase() + action.slice(1)} successful`,
-        {
-          id: toastId,
-          description: `User ${userName} has been ${action}d.`,
-        }
+        { id: toastId, description: `User ${userName} has been ${action}d.` }
       );
-      fetchUsers(); // Refresh the user list
+      fetchUsers();
     } catch (error) {
       toast.error(`Failed to ${action} user`, {
         id: toastId,
@@ -144,7 +123,7 @@ export default function AdminUsersPage() {
     }
   };
 
-  if (authLoading || !isAuthenticated || currentUser?.role !== "Admin") {
+  if (authLoading || isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -156,7 +135,7 @@ export default function AdminUsersPage() {
   const currentPage = pagination.skip / pagination.limit + 1;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <>
       <header className="border-b border-border bg-card/50">
         <div className="flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-2">
@@ -186,25 +165,21 @@ export default function AdminUsersPage() {
             </Link>
           </nav>
 
-          <Button variant="outline">
-            <Plus className="h-4 w-4 mr-2" />
-            Add User
+          <Button variant="outline" asChild>
+            <Link href="/dashboard">Exit Admin</Link>
           </Button>
         </div>
       </header>
-
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             User Management
           </h1>
           <p className="text-muted-foreground">
-            Manage user accounts, permissions, and access controls for the KMRL
-            Chakra system.
+            Manage user accounts, permissions, and access controls.
           </p>
         </div>
 
-        {/* Search and Filters */}
         <Card>
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
@@ -215,9 +190,8 @@ export default function AdminUsersPage() {
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <Input placeholder="Search by name, email, or employee ID... (Feature coming soon)" />
+                <Input placeholder="Search by name or email... (Feature coming soon)" />
               </div>
-
               <div className="flex gap-2">
                 <Select
                   value={filters.department}
@@ -234,7 +208,6 @@ export default function AdminUsersPage() {
                     <SelectItem value="Maintenance">Maintenance</SelectItem>
                   </SelectContent>
                 </Select>
-
                 <Select
                   value={filters.role}
                   onValueChange={(value) =>
@@ -251,7 +224,6 @@ export default function AdminUsersPage() {
                     <SelectItem value="User">User</SelectItem>
                   </SelectContent>
                 </Select>
-
                 <Select
                   value={filters.status}
                   onValueChange={(value) =>
@@ -273,7 +245,6 @@ export default function AdminUsersPage() {
           </CardContent>
         </Card>
 
-        {/* Users Table */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -286,123 +257,143 @@ export default function AdminUsersPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {users.length > 0 ? (
-                  users.map((user) => (
-                    <div
-                      key={user.email}
-                      className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border"
-                    >
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-12 w-12">
-                          <AvatarFallback>
-                            {user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-medium text-foreground">
-                              {user.name}
-                            </h3>
-                            <Badge
-                              variant={
-                                user.status === "active"
-                                  ? "default"
-                                  : user.status === "pending"
-                                  ? "secondary"
-                                  : "destructive"
-                              }
-                            >
-                              {user.status}
-                            </Badge>
-                            <Badge variant="outline">{user.role}</Badge>
+            <div className="space-y-4">
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <div
+                    key={user.email}
+                    className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarFallback>
+                          {user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium text-foreground">
+                            {user.name}
+                          </h3>
+                          <Badge
+                            variant={
+                              user.status === "active"
+                                ? "default"
+                                : user.status === "pending"
+                                ? "secondary"
+                                : "destructive"
+                            }
+                          >
+                            {user.status}
+                          </Badge>
+                          <Badge variant="outline">{user.role}</Badge>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Mail className="h-3 w-3" />
+                            {user.email}
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {user.email}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Building className="h-3 w-3" />
-                              {user.department}
-                            </div>
+                          <div className="flex items-center gap-1">
+                            <Building className="h-3 w-3" />
+                            {user.department}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {user.status === "pending" && (
-                          <>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-green-500 text-green-500 hover:bg-green-500/10 hover:text-green-400"
-                              onClick={() =>
-                                handleUserAction(
-                                  "approve",
-                                  user.email,
-                                  user.name
-                                )
-                              }
-                            >
-                              <UserCheck className="h-4 w-4 mr-2" />
-                              Approve
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-red-500 text-red-500 hover:bg-red-500/10 hover:text-red-400"
-                              onClick={() =>
-                                handleUserAction(
-                                  "reject",
-                                  user.email,
-                                  user.name
-                                )
-                              }
-                            >
-                              <UserX className="h-4 w-4 mr-2" />
-                              Reject
-                            </Button>
-                          </>
-                        )}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Reset Password</DropdownMenuItem>
-                            <DropdownMenuItem>Change Role</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive">
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Deactivate User
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-16 text-muted-foreground">
-                    <p>No users found matching your criteria.</p>
+                    <div className="flex items-center gap-2">
+                      {user.status === "pending" && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-green-500 text-green-500 hover:bg-green-500/10 hover:text-green-400"
+                            onClick={() =>
+                              handleUserAction("approve", user.email, user.name)
+                            }
+                          >
+                            <UserCheck className="h-4 w-4 mr-2" />
+                            Approve
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500 text-red-500 hover:bg-red-500/10 hover:text-red-400"
+                            onClick={() =>
+                              handleUserAction("reject", user.email, user.name)
+                            }
+                          >
+                            <UserX className="h-4 w-4 mr-2" />
+                            Reject
+                          </Button>
+                        </>
+                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>Reset Password</DropdownMenuItem>
+                          <DropdownMenuItem>Change Role</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Deactivate User
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
-                )}
-              </div>
-            )}
+                ))
+              ) : (
+                <div className="text-center py-16 text-muted-foreground">
+                  <p>No users found matching your criteria.</p>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
+
+        <div className="flex justify-end items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setPagination((prev) => ({
+                ...prev,
+                skip: Math.max(0, prev.skip - prev.limit),
+              }))
+            }
+            disabled={pagination.skip === 0}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setPagination((prev) => ({
+                ...prev,
+                skip: prev.skip + prev.limit,
+              }))
+            }
+            disabled={currentPage >= totalPages}
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

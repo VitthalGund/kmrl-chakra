@@ -1,69 +1,77 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect, useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { MessageSquare, FileText, Bell, Settings, LogOut, Menu, X } from "lucide-react"
-import { apiClient, type User } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  MessageSquare,
+  FileText,
+  Bell,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+} from "lucide-react";
+import { apiClient, type User } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { toast } = useToast()
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const router = useRouter();
+  const pathname = usePathname();
+  const { toast } = useToast();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token")
+    const token = localStorage.getItem("access_token");
     if (!token) {
-      router.push("/login")
-      return
+      router.push("/login");
+      return;
     }
 
     apiClient
       .getCurrentUser()
       .then(setUser)
       .catch(() => {
-        localStorage.removeItem("access_token")
-        localStorage.removeItem("refresh_token")
-        router.push("/login")
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        router.push("/login");
       })
-      .finally(() => setIsLoading(false))
-  }, [router])
+      .finally(() => setIsLoading(false));
+  }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token")
-    localStorage.removeItem("refresh_token")
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     toast({
       title: "Logged out",
       description: "You have been logged out successfully.",
-    })
-    router.push("/login")
-  }
+    });
+    router.push("/login");
+  };
 
   const navItems = [
     { href: "/dashboard", icon: MessageSquare, label: "Chat" },
     { href: "/dashboard/documents", icon: FileText, label: "Documents" },
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
-  ]
-
-  if (user?.role === "admin") {
+  ];
+  console.log({ user });
+  if (user?.role.toLocaleLowerCase() === "admin") {
     navItems.push({
       href: "/dashboard/admin",
       icon: Settings,
       label: "Admin Panel",
-    })
+    });
   }
 
   if (isLoading) {
@@ -71,7 +79,7 @@ export default function DashboardLayout({
       <div className="flex h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
-    )
+    );
   }
 
   return (
@@ -95,19 +103,25 @@ export default function DashboardLayout({
         <div className="flex h-full flex-col">
           <div className="flex items-center gap-3 border-b border-sidebar-border p-6">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-lg font-bold text-primary-foreground">KC</span>
+              <span className="text-lg font-bold text-primary-foreground">
+                KC
+              </span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-sidebar-foreground">KMRL Chakra</h1>
-              <p className="text-xs text-sidebar-foreground/70">Knowledge Platform</p>
+              <h1 className="text-lg font-bold text-sidebar-foreground">
+                KMRL Chakra
+              </h1>
+              <p className="text-xs text-sidebar-foreground/70">
+                Knowledge Platform
+              </p>
             </div>
           </div>
 
           <ScrollArea className="flex-1 px-3 py-4">
             <nav className="space-y-2">
               {navItems.map((item) => {
-                const Icon = item.icon
-                const isActive = pathname === item.href
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
                 return (
                   <Link key={item.href} href={item.href}>
                     <Button
@@ -123,7 +137,7 @@ export default function DashboardLayout({
                       {item.label}
                     </Button>
                   </Link>
-                )
+                );
               })}
             </nav>
           </ScrollArea>
@@ -136,8 +150,12 @@ export default function DashboardLayout({
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm font-medium text-sidebar-foreground">{user?.name}</p>
-                <p className="truncate text-xs text-sidebar-foreground/70">{user?.department}</p>
+                <p className="truncate text-sm font-medium text-sidebar-foreground">
+                  {user?.name}
+                </p>
+                <p className="truncate text-xs text-sidebar-foreground/70">
+                  {user?.department}
+                </p>
               </div>
               <Button
                 variant="ghost"
@@ -157,8 +175,11 @@ export default function DashboardLayout({
 
       {/* Overlay for mobile */}
       {isSidebarOpen && (
-        <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
       )}
     </div>
-  )
+  );
 }
