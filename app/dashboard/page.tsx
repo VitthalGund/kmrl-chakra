@@ -1,380 +1,332 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import {
-  Search,
-  FileText,
-  MessageSquare,
-  Bell,
-  BarChart3,
-  Clock,
-  TrendingUp,
-  Download,
-  Upload,
-  Eye,
-  Train,
-  Bot,
-  Zap,
-  Filter,
-} from "lucide-react"
-import Link from "next/link"
+import { Card, CardContent } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Send, Mic, Share2, Plus, MessageSquare } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
-export default function DashboardPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+interface Message {
+  role: "user" | "assistant"
+  content: string
+  sources?: Array<{ title: string; url: string }>
+}
 
-  const recentDocuments = [
-    {
-      id: 1,
-      title: "Safety Protocol Update",
-      titleMalayalam: "സുരക്ഷാ പ്രോട്ടോക്കോൾ അപ്ഡേറ്റ്",
-      type: "Policy",
-      date: "2025-01-15",
-      status: "New",
-      department: "Operations",
-    },
-    {
-      id: 2,
-      title: "Monthly Maintenance Report",
-      titleMalayalam: "മാസിക മെയിന്റനൻസ് റിപ്പോർട്ട്",
-      type: "Report",
-      date: "2025-01-14",
-      status: "Updated",
-      department: "Maintenance",
-    },
-    {
-      id: 3,
-      title: "Staff Training Manual",
-      titleMalayalam: "സ്റ്റാഫ് പരിശീലന മാനുവൽ",
-      type: "Manual",
-      date: "2025-01-13",
-      status: "Reviewed",
-      department: "HR",
-    },
-  ]
+interface ChatSession {
+  id: string
+  title: string
+  lastMessage: string
+}
 
-  const quickStats = [
-    {
-      title: "Total Documents",
-      titleMalayalam: "മൊത്തം ഡോക്യുമെന്റുകൾ",
-      value: "2,847",
-      change: "+12%",
-      icon: <FileText className="h-6 w-6 text-primary" />,
-    },
-    {
-      title: "Pending Reviews",
-      titleMalayalam: "അവലോകനത്തിനായി കാത്തിരിക്കുന്നവ",
-      value: "23",
-      change: "-5%",
-      icon: <Clock className="h-6 w-6 text-orange-500" />,
-    },
-    {
-      title: "AI Queries Today",
-      titleMalayalam: "ഇന്നത്തെ AI ചോദ്യങ്ങൾ",
-      value: "156",
-      change: "+28%",
-      icon: <Bot className="h-6 w-6 text-blue-500" />,
-    },
-    {
-      title: "System Efficiency",
-      titleMalayalam: "സിസ്റ്റം കാര്യക്ഷമത",
-      value: "94.2%",
-      change: "+2.1%",
-      icon: <TrendingUp className="h-6 w-6 text-green-500" />,
-    },
-  ]
+export default function ChatPage() {
+  const { toast } = useToast()
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [targetLanguage, setTargetLanguage] = useState("en")
+  const [sessionId, setSessionId] = useState(() => `session-${Date.now()}`)
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([])
+  const [showHistory, setShowHistory] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
-  const notifications = [
-    {
-      id: 1,
-      title: "New safety guidelines uploaded",
-      titleMalayalam: "പുതിയ സുരക്ഷാ മാർഗ്ഗനിർദ്ദേശങ്ങൾ അപ്‌ലോഡ് ചെയ്തു",
-      time: "2 hours ago",
-      type: "info",
-    },
-    {
-      id: 2,
-      title: "Weekly maintenance report due",
-      titleMalayalam: "പ്രതിവാര മെയിന്റനൻസ് റിപ്പോർട്ട് അവസാന തീയതി",
-      time: "4 hours ago",
-      type: "warning",
-    },
-    {
-      id: 3,
-      title: "System backup completed",
-      titleMalayalam: "സിസ്റ്റം ബാക്കപ്പ് പൂർത്തിയായി",
-      time: "6 hours ago",
-      type: "success",
-    },
-  ]
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!input.trim() || isLoading) return
+
+    const userMessage: Message = { role: "user", content: input }
+    setMessages((prev) => [...prev, userMessage])
+    setInput("")
+    setIsLoading(true)
+
+    const assistantMessage: Message = { role: "assistant", content: "", sources: [] }
+    setMessages((prev) => [...prev, assistantMessage])
+
+    try {
+      abortControllerRef.current = new AbortController()
+      const token = localStorage.getItem("access_token")
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1/query/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query: input,
+          session_id: sessionId,
+          target_language: targetLanguage,
+        }),
+        signal: abortControllerRef.current.signal,
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to get response")
+      }
+
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
+
+      if (!reader) {
+        throw new Error("No reader available")
+      }
+
+      let accumulatedContent = ""
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split("\n")
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6)
+            if (data === "[DONE]") continue
+
+            try {
+              const parsed = JSON.parse(data)
+              if (parsed.content) {
+                accumulatedContent += parsed.content
+                setMessages((prev) => {
+                  const newMessages = [...prev]
+                  const lastMessage = newMessages[newMessages.length - 1]
+                  if (lastMessage.role === "assistant") {
+                    lastMessage.content = accumulatedContent
+                    if (parsed.sources) {
+                      lastMessage.sources = parsed.sources
+                    }
+                  }
+                  return newMessages
+                })
+              }
+            } catch (e) {
+              console.error("[v0] Failed to parse SSE data:", e)
+            }
+          }
+        }
+      }
+
+      // Update chat history
+      const newSession: ChatSession = {
+        id: sessionId,
+        title: input.slice(0, 50) + (input.length > 50 ? "..." : ""),
+        lastMessage: accumulatedContent.slice(0, 100),
+      }
+      setChatSessions((prev) => {
+        const filtered = prev.filter((s) => s.id !== sessionId)
+        return [newSession, ...filtered]
+      })
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        console.log("[v0] Request aborted")
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to get response from AI",
+          variant: "destructive",
+        })
+        setMessages((prev) => prev.slice(0, -1))
+      }
+    } finally {
+      setIsLoading(false)
+      abortControllerRef.current = null
+    }
+  }
+
+  const handleNewChat = () => {
+    setMessages([])
+    setSessionId(`session-${Date.now()}`)
+  }
+
+  const handleShareChat = async () => {
+    try {
+      const token = localStorage.getItem("access_token")
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1/chat/${sessionId}/share`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+
+      if (!response.ok) throw new Error("Failed to share chat")
+
+      const data = await response.json()
+      navigator.clipboard.writeText(data.shareable_link)
+
+      toast({
+        title: "Chat shared",
+        description: "Link copied to clipboard",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to share chat",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const loadChatSession = (session: ChatSession) => {
+    setSessionId(session.id)
+    setShowHistory(false)
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Link href="/" className="flex items-center space-x-2">
-                <Train className="h-6 w-6 text-primary" />
-                <span className="font-bold text-lg">KMRL Chakra</span>
-              </Link>
+    <div className="flex h-full">
+      {/* Chat History Sidebar */}
+      <div
+        className={`${
+          showHistory ? "w-64" : "w-0"
+        } overflow-hidden border-r border-border bg-card transition-all duration-300`}
+      >
+        <div className="p-4">
+          <h2 className="mb-4 text-lg font-semibold">Chat History</h2>
+          <ScrollArea className="h-[calc(100vh-12rem)]">
+            <div className="space-y-2">
+              {chatSessions.map((session) => (
+                <Button
+                  key={session.id}
+                  variant="ghost"
+                  className="w-full justify-start text-left"
+                  onClick={() => loadChatSession(session)}
+                >
+                  <div className="truncate">
+                    <p className="truncate text-sm font-medium">{session.title}</p>
+                    <p className="truncate text-xs text-muted-foreground">{session.lastMessage}</p>
+                  </div>
+                </Button>
+              ))}
             </div>
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/dashboard" className="text-primary font-medium">
-                Dashboard
-              </Link>
-              <Link href="/documents" className="text-foreground hover:text-primary transition-colors">
-                Documents
-              </Link>
-              <Link href="/search" className="text-foreground hover:text-primary transition-colors">
-                Search
-              </Link>
-              <Link href="/analytics" className="text-foreground hover:text-primary transition-colors">
-                Analytics
-              </Link>
-              <Link href="/settings" className="text-foreground hover:text-primary transition-colors">
-                Settings
-              </Link>
-            </nav>
-            <div className="flex items-center space-x-3">
-              <Button variant="outline" size="sm">
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
-              </Button>
-              <Button size="sm">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                WhatsApp Bot
-              </Button>
-            </div>
+          </ScrollArea>
+        </div>
+      </div>
+
+      {/* Main Chat Area */}
+      <div className="flex flex-1 flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-border bg-card px-6 py-4">
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="icon" onClick={() => setShowHistory(!showHistory)}>
+              <MessageSquare className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-semibold">AI Chat Assistant</h1>
           </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome back, Metro Worker!</h1>
-          <p className="text-xl text-muted-foreground mb-1">സ്വാഗതം, മെട്രോ തൊഴിലാളി!</p>
-          <p className="text-muted-foreground">
-            Here's your personalized dashboard with the latest updates and quick access to your documents.
-          </p>
-        </div>
-
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative max-w-2xl">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-            <Input
-              type="text"
-              placeholder="Search documents, ask questions... / ഡോക്യുമെന്റുകൾ തിരയുക, ചോദ്യങ്ങൾ ചോദിക്കുക..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 pr-4 py-3 text-base rounded-lg"
-            />
-            <Button className="absolute right-2 top-1/2 transform -translate-y-1/2">
-              <Zap className="h-4 w-4 mr-2" />
-              AI Search
+          <div className="flex items-center gap-2">
+            <Select value={targetLanguage} onValueChange={setTargetLanguage}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="ml">Malayalam</SelectItem>
+                <SelectItem value="hi">Hindi</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" size="icon" onClick={handleNewChat}>
+              <Plus className="h-5 w-5" />
+            </Button>
+            <Button variant="outline" size="icon" onClick={handleShareChat} disabled={messages.length === 0}>
+              <Share2 className="h-5 w-5" />
             </Button>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {quickStats.map((stat, index) => (
-            <Card key={index} className="hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                    <p className="text-xs text-muted-foreground mb-2">{stat.titleMalayalam}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className={`text-sm ${stat.change.startsWith("+") ? "text-green-600" : "text-red-600"}`}>
-                      {stat.change} from last month
-                    </p>
-                  </div>
-                  <div className="float-animation">{stat.icon}</div>
+        {/* Messages */}
+        <ScrollArea className="flex-1 p-6">
+          <div className="mx-auto max-w-3xl space-y-6">
+            {messages.length === 0 && (
+              <div className="flex h-[60vh] flex-col items-center justify-center text-center">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-metro">
+                  <MessageSquare className="h-8 w-8 text-white" />
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <h2 className="mb-2 text-2xl font-bold">Welcome to KMRL Chakra</h2>
+                <p className="text-muted-foreground">Ask me anything about KMRL operations, policies, or procedures</p>
+              </div>
+            )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Recent Documents */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Recent Documents</CardTitle>
-                    <CardDescription>സമീപകാല ഡോക്യുമെന്റുകൾ</CardDescription>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filter
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentDocuments.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <FileText className="h-8 w-8 text-primary" />
-                        <div>
-                          <h4 className="font-medium">{doc.title}</h4>
-                          <p className="text-sm text-muted-foreground">{doc.titleMalayalam}</p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Badge variant="secondary" className="text-xs">
-                              {doc.type}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              {doc.department}
-                            </Badge>
-                            <span className="text-xs text-muted-foreground">{doc.date}</span>
-                          </div>
+            {messages.map((message, index) => (
+              <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                <Card className={`max-w-[80%] ${message.role === "user" ? "bg-gradient-metro text-white" : "bg-card"}`}>
+                  <CardContent className="p-4">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                    {message.sources && message.sources.length > 0 && (
+                      <div className="mt-4 border-t border-border pt-3">
+                        <p className="mb-2 text-xs font-semibold text-muted-foreground">Sources:</p>
+                        <div className="space-y-1">
+                          {message.sources.map((source, idx) => (
+                            <a
+                              key={idx}
+                              href={source.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-xs text-primary hover:underline"
+                            >
+                              {source.title}
+                            </a>
+                          ))}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge
-                          variant={
-                            doc.status === "New" ? "default" : doc.status === "Updated" ? "secondary" : "outline"
-                          }
-                          className="text-xs"
-                        >
-                          {doc.status}
-                        </Badge>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Download className="h-4 w-4" />
-                        </Button>
-                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+
+            {isLoading && (
+              <div className="flex justify-start">
+                <Card className="max-w-[80%]">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-primary" />
                     </div>
-                  ))}
-                </div>
-                <div className="mt-4 text-center">
-                  <Button variant="outline" asChild>
-                    <Link href="/documents">View All Documents</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
+        </ScrollArea>
 
-          {/* Notifications & Quick Actions */}
-          <div className="space-y-6">
-            {/* Notifications */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Bell className="h-5 w-5 mr-2" />
-                  Notifications
-                </CardTitle>
-                <CardDescription>അറിയിപ്പുകൾ</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {notifications.map((notification) => (
-                    <div key={notification.id} className="flex items-start space-x-3 p-3 border rounded-lg">
-                      <div
-                        className={`w-2 h-2 rounded-full mt-2 ${
-                          notification.type === "info"
-                            ? "bg-blue-500"
-                            : notification.type === "warning"
-                              ? "bg-orange-500"
-                              : "bg-green-500"
-                        }`}
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{notification.title}</p>
-                        <p className="text-xs text-muted-foreground">{notification.titleMalayalam}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{notification.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>ദ്രുത പ്രവർത്തനങ്ങൾ</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <Button className="w-full justify-start bg-transparent" variant="outline" asChild>
-                    <Link href="/upload">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Document
-                    </Link>
-                  </Button>
-                  <Button className="w-full justify-start bg-transparent" variant="outline" asChild>
-                    <Link href="/search">
-                      <Search className="h-4 w-4 mr-2" />
-                      Advanced Search
-                    </Link>
-                  </Button>
-                  <Button className="w-full justify-start bg-transparent" variant="outline" asChild>
-                    <Link href="/whatsapp">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      WhatsApp Bot
-                    </Link>
-                  </Button>
-                  <Button className="w-full justify-start bg-transparent" variant="outline" asChild>
-                    <Link href="/analytics">
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      View Analytics
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* System Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle>System Status</CardTitle>
-                <CardDescription>സിസ്റ്റം നില</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>AI Processing</span>
-                      <span>94%</span>
-                    </div>
-                    <Progress value={94} className="h-2" />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Document Indexing</span>
-                      <span>87%</span>
-                    </div>
-                    <Progress value={87} className="h-2" />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>WhatsApp Bot</span>
-                      <span>100%</span>
-                    </div>
-                    <Progress value={100} className="h-2" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Input */}
+        <div className="border-t border-border bg-card p-4">
+          <form onSubmit={handleSendMessage} className="mx-auto max-w-3xl">
+            <div className="flex items-center gap-2">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask a question..."
+                className="flex-1"
+                disabled={isLoading}
+              />
+              <Button type="button" variant="outline" size="icon" disabled>
+                <Mic className="h-5 w-5" />
+              </Button>
+              <Button type="submit" size="icon" className="bg-gradient-metro hover:opacity-90" disabled={isLoading}>
+                <Send className="h-5 w-5" />
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
