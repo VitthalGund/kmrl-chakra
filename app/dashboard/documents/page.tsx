@@ -1,32 +1,28 @@
 "use client";
 
-import type React from "react";
-
 import { useState, useEffect } from "react";
+import {
+  Search,
+  LayoutGrid,
+  List,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  Loader2,
+  Calendar,
+  Building,
+  Tag,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Search, FileText, Filter, Train, Shield } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { apiClient, type Document } from "@/lib/api";
 import {
   Select,
   SelectContent,
@@ -34,331 +30,209 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
+import { toast } from "sonner";
+import { apiClient, Document } from "@/lib/api"; // Ensure Document type is exported from api.ts
+import { useAuth } from "@/lib/auth-context";
+import { format } from "date-fns";
 
 export default function DocumentsPage() {
-  const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [totalDocuments, setTotalDocuments] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const [uploadData, setUploadData] = useState({
-    file: null as File | null,
-    category: "",
-    department: "",
-    tags: "",
-    access_roles: "employee",
+  const [filters, setFilters] = useState({
+    department: "all",
+    category: "all",
+  });
+  const [pagination, setPagination] = useState({
+    skip: 0,
+    limit: 8,
   });
 
   useEffect(() => {
-    loadDocuments();
-  }, []);
+    const fetchDocuments = async () => {
+      if (!isAuthenticated) return;
+      setIsLoading(true);
+      try {
+        const { data } = await apiClient.getDocuments({
+          skip: pagination.skip,
+          limit: pagination.limit,
+          department:
+            filters.department !== "all" ? filters.department : undefined,
+          category: filters.category !== "all" ? filters.category : undefined,
+        });
+        setDocuments(data.documents);
+        setTotalDocuments(data.total);
+      } catch (error) {
+        toast.error("Failed to fetch documents.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const loadDocuments = async () => {
-    try {
-      const data = await apiClient.getDocuments();
-      setDocuments(data);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load documents",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    fetchDocuments();
+  }, [isAuthenticated, filters, pagination]);
 
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!uploadData.file) {
-      toast({
-        title: "Error",
-        description: "Please select a file",
-        variant: "destructive",
-      });
-      return;
-    }
+  const totalPages = Math.ceil(totalDocuments / pagination.limit);
+  const currentPage = pagination.skip / pagination.limit + 1;
 
-    setIsUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", uploadData.file);
-      formData.append("category", uploadData.category);
-      formData.append("department", uploadData.department);
-      formData.append("tags", uploadData.tags);
-      formData.append("access_roles", uploadData.access_roles);
-
-      await apiClient.uploadDocument(formData);
-
-      toast({
-        title: "Success",
-        description: "Document uploaded successfully",
-      });
-
-      setIsUploadOpen(false);
-      setUploadData({
-        file: null,
-        category: "",
-        department: "",
-        tags: "",
-        access_roles: "employee",
-      });
-      loadDocuments();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to upload document",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const filteredDocuments = documents.filter(
-    (doc) =>
-      doc.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.department.toLowerCase().includes(searchQuery.toLowerCase())
+  const DocumentCard = ({ doc }: { doc: Document }) => (
+    <Card className="flex flex-col">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <FileText className="h-8 w-8 text-primary" />
+          <Badge variant="outline">{doc.category}</Badge>
+        </div>
+        <CardTitle className="pt-4 text-lg truncate">{doc.filename}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-grow space-y-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <Building className="h-4 w-4" />
+          <span>{doc.department}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4" />
+          <span>{format(new Date(doc.uploaded_at), "PPP")}</span>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button variant="outline" className="w-full">
+          View Details
+        </Button>
+      </CardFooter>
+    </Card>
   );
 
   return (
-    <>
-      <header className="border-b border-border bg-card/50">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <Train className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">
-              KMRL Chakra
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/dashboard/admin"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Analytics
-            </Link>
-            <Link
-              href="/dashboard/documents"
-              className="text-primary font-medium"
-            >
-              Document Management
-            </Link>
-            <Link
-              href="/dashboard/admin/users"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              User Management
-            </Link>
-          </nav>
+    <div className="p-6 space-y-6 min-h-screen">
+      <div>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Document Management
+        </h1>
+        <p className="text-muted-foreground">
+          Browse, search, and manage all documents in the KMRL knowledge base.
+        </p>
+      </div>
 
-          <Button variant="outline" asChild>
-            <Link href="/dashboard">Exit Admin</Link>
+      <Card>
+        <CardContent className="p-4 flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative flex-grow w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input placeholder="Search documents..." className="pl-10" />
+          </div>
+          <div className="flex gap-2 w-full md:w-auto">
+            <Select
+              value={filters.department}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, department: value }))
+              }
+            >
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Department" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Departments</SelectItem>
+                <SelectItem value="Operations">Operations</SelectItem>
+                <SelectItem value="Maintenance">Maintenance</SelectItem>
+                <SelectItem value="Engineering">Engineering</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={filters.category}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, category: value }))
+              }
+            >
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="Manual">Manual</SelectItem>
+                <SelectItem value="Report">Report</SelectItem>
+                <SelectItem value="Policy">Policy</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2 rounded-md bg-muted p-1">
+            <Button
+              variant={viewMode === "grid" ? "secondary" : "ghost"}
+              size="icon"
+              onClick={() => setViewMode("grid")}
+            >
+              <LayoutGrid className="h-5 w-5" />
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "secondary" : "ghost"}
+              size="icon"
+              onClick={() => setViewMode("list")}
+            >
+              <List className="h-5 w-5" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center h-96">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {documents.map((doc) => (
+              <DocumentCard key={doc.id} doc={doc} />
+            ))}
+          </div>
+          {documents.length === 0 && (
+            <div className="text-center py-20 text-muted-foreground">
+              <p className="text-lg">No documents found.</p>
+              <p>Try adjusting your filters or uploading a new document.</p>
+            </div>
+          )}
+        </>
+      )}
+
+      <div className="flex justify-between items-center relative bottom-2">
+        <span className="text-sm text-muted-foreground">
+          Showing {documents.length} of {totalDocuments} documents
+        </span>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setPagination((prev) => ({
+                ...prev,
+                skip: Math.max(0, prev.skip - prev.limit),
+              }))
+            }
+            disabled={pagination.skip === 0}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Previous
+          </Button>
+          <span className="text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setPagination((prev) => ({
+                ...prev,
+                skip: prev.skip + prev.limit,
+              }))
+            }
+            disabled={currentPage >= totalPages}
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-      </header>
-      <div className="h-full p-6">
-        <div className="mx-auto max-w-7xl space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Documents</h1>
-              <p className="text-muted-foreground">
-                Manage and access KMRL documents
-              </p>
-            </div>
-            <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-gradient-metro hover:opacity-90">
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Document
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Upload Document</DialogTitle>
-                  <DialogDescription>
-                    Add a new document to the knowledge base
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleUpload} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="file">File</Label>
-                    <Input
-                      id="file"
-                      type="file"
-                      onChange={(e) =>
-                        setUploadData({
-                          ...uploadData,
-                          file: e.target.files?.[0] || null,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Input
-                      id="category"
-                      placeholder="e.g., Policy, Procedure, Manual"
-                      value={uploadData.category}
-                      onChange={(e) =>
-                        setUploadData({
-                          ...uploadData,
-                          category: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="department">Department</Label>
-                    <Input
-                      id="department"
-                      placeholder="e.g., Operations, HR, Finance"
-                      value={uploadData.department}
-                      onChange={(e) =>
-                        setUploadData({
-                          ...uploadData,
-                          department: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="tags">Tags (comma-separated)</Label>
-                    <Input
-                      id="tags"
-                      placeholder="e.g., safety, training, guidelines"
-                      value={uploadData.tags}
-                      onChange={(e) =>
-                        setUploadData({ ...uploadData, tags: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="access_roles">Access Level</Label>
-                    <Select
-                      value={uploadData.access_roles}
-                      onValueChange={(value) =>
-                        setUploadData({ ...uploadData, access_roles: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="employee">Employee</SelectItem>
-                        <SelectItem value="manager">Manager</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-metro hover:opacity-90"
-                    disabled={isUploading}
-                  >
-                    {isUploading ? "Uploading..." : "Upload"}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          {/* Search and Filter */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search documents..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <Button variant="outline">
-                  <Filter className="mr-2 h-4 w-4" />
-                  Filter
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Documents Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>All Documents ({filteredDocuments.length})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex h-64 items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                </div>
-              ) : filteredDocuments.length === 0 ? (
-                <div className="flex h-64 flex-col items-center justify-center text-center">
-                  <FileText className="mb-4 h-12 w-12 text-muted-foreground" />
-                  <p className="text-lg font-medium">No documents found</p>
-                  <p className="text-sm text-muted-foreground">
-                    Upload your first document to get started
-                  </p>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Filename</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Department</TableHead>
-                      <TableHead>Tags</TableHead>
-                      <TableHead>Uploaded</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredDocuments.map((doc) => (
-                      <TableRow key={doc.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-primary" />
-                            {doc.filename}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">{doc.category}</Badge>
-                        </TableCell>
-                        <TableCell>{doc.department}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {doc.tags.slice(0, 3).map((tag, idx) => (
-                              <Badge
-                                key={idx}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {new Date(doc.uploaded_at).toLocaleDateString()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </div>
       </div>
-    </>
+    </div>
   );
 }
