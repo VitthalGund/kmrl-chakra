@@ -268,6 +268,32 @@ class ApiClient {
 
     return response.json();
   }
+
+  async getChatSessions(): Promise<{ id: string; title: string }[]> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/collaboration/chat/sessions`,
+      {
+        headers: this.getHeaders(),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch chat sessions");
+    }
+    return response.json();
+  }
+
+  async getChatSessionDetails(sessionId: string): Promise<any> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/collaboration/chat/sessions/${sessionId}`,
+      {
+        headers: this.getHeaders(),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch chat session details");
+    }
+    return response.json();
+  }
 }
 
 export const apiClient = new ApiClient();

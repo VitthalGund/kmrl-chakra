@@ -71,8 +71,8 @@ export default function AdminUsersPage() {
       const statusFilter =
         filters.status !== "all" ? filters.status : undefined;
       const response = await apiClient.getAdminUsers(statusFilter);
-      setUsers(response);
-      setTotalUsers(response.length);
+      setUsers(response.users);
+      setTotalUsers(response.total);
     } catch (error) {
       toast.error("Failed to fetch users", {
         description: "There was an error connecting to the server.",
