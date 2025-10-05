@@ -57,6 +57,12 @@ export interface ChatMessage {
   sources?: Source[];
 }
 
+export interface ChatSession {
+  id: string;
+  title: string;
+  created_at: string;
+  history: ChatMessage[];
+}
 export interface Notification {
   id: string;
   title: string;
@@ -248,6 +254,20 @@ class ApiClient {
 
   async deleteChat(sessionId: string): Promise<void> {
     await this.axios.delete(`/api/v1/collaboration/chat/sessions/${sessionId}`);
+  }
+
+  async getSharedChatPreview(shareId: string): Promise<ChatSession> {
+    const res = await this.axios.get(
+      `/api/v1/collaboration/chat/shared/preview/${shareId}`
+    );
+    return res.data;
+  }
+
+  async importSharedChat(shareId: string): Promise<ChatSession> {
+    const res = await this.axios.get(
+      `/api/v1/collaboration/chat/share/${shareId}`
+    );
+    return res.data;
   }
 }
 
