@@ -233,13 +233,13 @@ export default function KnowledgeDiscoveryPage() {
         {!isHistoryCollapsed && (
           <>
             <ResizablePanel defaultSize={20} minSize={15} maxSize={25}>
-              <div className="flex h-full flex-col p-4">
+              <div className="flex h-fit flex-col p-4">
                 <Button onClick={handleNewChat} className="mb-4 w-full">
                   <Plus className="h-4 w-4 mr-2" />
                   New Chat
                 </Button>
                 <ScrollArea className="flex-grow">
-                  <div className="space-y-1 pr-2">
+                  <div className="space-y-1">
                     {conversations.map((conv) => (
                       <div
                         key={conv.id}
@@ -386,7 +386,7 @@ export default function KnowledgeDiscoveryPage() {
                 </Button>
               </div>
             </header>
-            <ScrollArea className="flex-1 p-6 max-h-screen">
+            <ScrollArea className="flex-1 p-6 max-h-[calc(100vh-190px)]">
               <div className="space-y-6 max-w-4xl mx-auto">
                 {activeMessages.map((message, index) => (
                   <div
@@ -471,7 +471,7 @@ export default function KnowledgeDiscoveryPage() {
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
-            <div className="border-t bg-background p-4">
+            <div className="border-t bg-background p-4 relative bottom-0">
               <div className="relative max-w-4xl mx-auto">
                 <Input
                   value={input}
