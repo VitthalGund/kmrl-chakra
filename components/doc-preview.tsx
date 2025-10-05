@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2, FileWarning } from "lucide-react";
+import Markdown from "react-markdown";
 
 interface DocPreviewProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface DocPreviewProps {
     file_name: string;
     storage_url?: string;
     file_type?: string;
+    context?: string;
   } | null;
 }
 
@@ -22,12 +24,19 @@ export function DocPreview({ isOpen, onClose, source }: DocPreviewProps) {
   if (!source) return null;
 
   const renderContent = () => {
-    if (!source.storage_url) {
+    if (!source.storage_url && !source.context) {
       return (
         <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
           <FileWarning className="h-16 w-16 mb-4" />
           <p className="text-lg font-semibold">No Preview Available</p>
           <p>A storage URL for this document has not been provided.</p>
+        </div>
+      );
+    }
+    if (source.context) {
+      return (
+        <div className="flex flex-col items-center justify-start text-muted-foreground">
+          <Markdown>{source.context}</Markdown>
         </div>
       );
     }
@@ -57,7 +66,7 @@ export function DocPreview({ isOpen, onClose, source }: DocPreviewProps) {
 
     // Fallback for other file types like docx, pptx, etc.
     return (
-      <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+      <div className="flex flex-col items-center justify-start h-full text-muted-foreground">
         <FileWarning className="h-16 w-16 mb-4" />
         <p className="text-lg font-semibold">Direct Preview Not Supported</p>
         <p>You can download the file to view it.</p>
@@ -77,9 +86,15 @@ export function DocPreview({ isOpen, onClose, source }: DocPreviewProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="truncate">{source.file_name}</DialogTitle>
+          <DialogTitle className="truncate">
+            {source.context ? "Content" : source.file_name}
+          </DialogTitle>
         </DialogHeader>
-        <div className="flex-grow flex items-center justify-center overflow-auto">
+        <div
+          className={`flex-grow flex justify-center ${
+            source.context ? "items-start" : "items-center"
+          } overflow-auto`}
+        >
           {renderContent()}
         </div>
       </DialogContent>
