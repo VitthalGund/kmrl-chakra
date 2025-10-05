@@ -49,8 +49,6 @@ function SidebarNav() {
   const navItems = [
     { href: "/dashboard", icon: Search, label: "AI Search" },
     { href: "/dashboard/documents", icon: FileText, label: "Documents" },
-    { href: "/dashboard/upload", icon: Upload, label: "Upload" },
-    { href: "/dashboard/analytics", icon: LineChart, label: "My Analytics" },
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
     { href: "/dashboard/settings", icon: Settings, label: "Settings" },
   ];
