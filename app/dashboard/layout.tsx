@@ -1,186 +1,219 @@
 "use client";
 
-import type React from "react";
-
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import React, { ReactNode } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { usePathname } from "next/navigation";
+import { AuthProvider, useAuth } from "@/lib/auth-context";
+import { AuthGuard } from "@/components/auth-guard";
+import { Toaster } from "@/components/ui/sonner";
 import {
-  MessageSquare,
+  Home,
   FileText,
-  Bell,
+  Search,
+  LineChart,
   Settings,
+  Shield,
+  Upload,
   LogOut,
+  Users,
+  BarChartBig,
   Menu,
-  X,
+  Bell,
 } from "lucide-react";
-import { apiClient, type User } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const router = useRouter();
+// Define the Sidebar component directly inside the layout
+function SidebarNav() {
   const pathname = usePathname();
-  const { toast } = useToast();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-
-    apiClient
-      .getCurrentUser()
-      .then(setUser)
-      .catch(() => {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        router.push("/login");
-      })
-      .finally(() => setIsLoading(false));
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    toast({
-      title: "Logged out",
-      description: "You have been logged out successfully.",
-    });
-    router.push("/login");
-  };
+  const { user, logout } = useAuth();
 
   const navItems = [
-    { href: "/dashboard", icon: MessageSquare, label: "Chat" },
+    { href: "/dashboard", icon: Home, label: "Dashboard" },
     { href: "/dashboard/documents", icon: FileText, label: "Documents" },
+    { href: "/dashboard/search", icon: Search, label: "AI Search" },
+    { href: "/dashboard/upload", icon: Upload, label: "Upload" },
+    { href: "/dashboard/analytics", icon: LineChart, label: "My Analytics" },
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
+    { href: "/dashboard/settings", icon: Settings, label: "Settings" },
   ];
-  console.log({ user });
-  console.log({ condition: user?.role?.toLocaleLowerCase() === "admin" });
-  if (user?.role.toLocaleLowerCase() === "admin") {
-    navItems.push({
-      href: "/dashboard/admin",
-      icon: Settings,
-      label: "Admin Panel",
-    });
-  }
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
-  }
+  const adminNavItems = [
+    { href: "/dashboard/admin", icon: BarChartBig, label: "Analytics" },
+    { href: "/dashboard/admin/users", icon: Users, label: "Users" },
+  ];
+
+  const isActive = (path: string) => {
+    if (path === "/dashboard") return pathname === path;
+    return pathname.startsWith(path);
+  };
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Mobile sidebar toggle */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="fixed left-4 top-4 z-50 lg:hidden"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? <X /> : <Menu />}
-      </Button>
+    <nav className="flex flex-col h-full">
+      <div className="flex-1 space-y-2">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+              isActive(item.href) && !pathname.includes("/admin")
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            <item.icon className="h-5 w-5" />
+            {item.label}
+          </Link>
+        ))}
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-gradient-midnight transition-transform duration-300 lg:relative lg:translate-x-0 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex h-full flex-col">
-          <div className="flex items-center gap-3 border-b border-sidebar-border p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-lg font-bold text-primary-foreground">
-                KC
-              </span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-sidebar-foreground">
-                KMRL Chakra
-              </h1>
-              <p className="text-xs text-sidebar-foreground/70">
-                Knowledge Platform
-              </p>
-            </div>
-          </div>
-
-          <ScrollArea className="flex-1 px-3 py-4">
-            <nav className="space-y-2">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
-                return (
-                  <Link key={item.href} href={item.href}>
-                    <Button
-                      variant={isActive ? "secondary" : "ghost"}
-                      className={`w-full justify-start ${
-                        isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      }`}
-                      onClick={() => setIsSidebarOpen(false)}
-                    >
-                      <Icon className="mr-3 h-5 w-5" />
-                      {item.label}
-                    </Button>
-                  </Link>
-                );
-              })}
-            </nav>
-          </ScrollArea>
-
-          <div className="border-t border-sidebar-border p-4">
-            <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent p-3">
-              <Avatar>
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {user?.name?.charAt(0) || "U"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm font-medium text-sidebar-foreground">
-                  {user?.name}
-                </p>
-                <p className="truncate text-xs text-sidebar-foreground/70">
-                  {user?.department}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                className="text-sidebar-foreground hover:bg-sidebar-border"
+        {user?.role === "Admin" && (
+          <Accordion
+            type="single"
+            collapsible
+            defaultValue={pathname.includes("/admin") ? "admin-panel" : ""}
+            className="w-full"
+          >
+            <AccordionItem value="admin-panel" className="border-b-0">
+              <AccordionTrigger
+                className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:no-underline ${
+                  pathname.includes("/admin")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted"
+                }`}
               >
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
+                <div className="flex items-center gap-3">
+                  <Shield className="h-5 w-5" />
+                  Admin Panel
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2">
+                <div className="space-y-1 pl-6">
+                  {adminNavItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                        isActive(item.href)
+                          ? "bg-muted font-semibold text-foreground"
+                          : "text-muted-foreground hover:bg-muted/50"
+                      }`}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
+      </div>
+
+      <div className="mt-auto">
+        <button
+          onClick={logout}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted"
+        >
+          <LogOut className="h-5 w-5" />
+          Logout
+        </button>
+      </div>
+    </nav>
+  );
+}
+
+function DashboardLayoutContent({ children }: { children: ReactNode }) {
+  const { user, logout } = useAuth();
+
+  return (
+    <AuthGuard>
+      <div className="grid min-h-screen w-full md:grid-cols-[256px_1fr]">
+        <aside className="hidden w-64 flex-col border-r bg-background p-4 md:flex">
+          <div className="mb-8 flex items-center gap-2">
+            <img src="/kmrl-logo.jpg" alt="KMRL Logo" className="h-10 w-10" />
+            <h1 className="text-xl font-bold">KMRL Chakra</h1>
           </div>
+          <SidebarNav />
+        </aside>
+
+        <div className="flex flex-col">
+          <header className="flex h-16 items-center justify-between border-b bg-background px-6 md:justify-end">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="md:hidden">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle navigation menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="flex flex-col p-4">
+                <div className="mb-8 flex items-center gap-2">
+                  <img
+                    src="/kmrl-logo.jpg"
+                    alt="KMRL Logo"
+                    className="h-10 w-10"
+                  />
+                  <h1 className="text-xl font-bold">KMRL Chakra</h1>
+                </div>
+                <SidebarNav />
+              </SheetContent>
+            </Sheet>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Avatar>
+                    <AvatarImage src={user?.name || ""} />
+                    <AvatarFallback>
+                      {user?.name
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("") || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/settings">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </header>
+
+          <main className="flex-1 overflow-auto bg-muted/40">{children}</main>
         </div>
-      </aside>
+      </div>
+    </AuthGuard>
+  );
+}
 
-      {/* Main content */}
-      <main className="flex-1 overflow-auto bg-background">{children}</main>
-
-      {/* Overlay for mobile */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-    </div>
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  return (
+    <AuthProvider>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      <Toaster />
+    </AuthProvider>
   );
 }

@@ -14,8 +14,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Shield,
-  Train,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +45,6 @@ import { toast } from "sonner";
 import { apiClient, User } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function AdminUsersPage() {
   const {
@@ -74,8 +71,8 @@ export default function AdminUsersPage() {
       const statusFilter =
         filters.status !== "all" ? filters.status : undefined;
       const response = await apiClient.getAdminUsers(statusFilter);
-      setUsers(response.users);
-      setTotalUsers(response.total);
+      setUsers(response);
+      setTotalUsers(response.length);
     } catch (error) {
       toast.error("Failed to fetch users", {
         description: "There was an error connecting to the server.",
@@ -135,42 +132,8 @@ export default function AdminUsersPage() {
   const currentPage = pagination.skip / pagination.limit + 1;
 
   return (
-    <>
-      <header className="border-b border-border bg-card/50">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <Train className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">
-              KMRL Chakra
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/dashboard/admin"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Analytics
-            </Link>
-            <Link
-              href="/dashboard/documents"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Document Management
-            </Link>
-            <Link
-              href="/dashboard/admin/users"
-              className="text-primary font-medium"
-            >
-              User Management
-            </Link>
-          </nav>
-
-          <Button variant="outline" asChild>
-            <Link href="/dashboard">Exit Admin</Link>
-          </Button>
-        </div>
-      </header>
-      <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 flex flex-col h-full">
+      <div className="flex-shrink-0 space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             User Management
@@ -244,7 +207,9 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
 
+      <div className="flex-grow">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -359,41 +324,38 @@ export default function AdminUsersPage() {
             </div>
           </CardContent>
         </Card>
-
-        <div className="flex justify-end items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setPagination((prev) => ({
-                ...prev,
-                skip: Math.max(0, prev.skip - prev.limit),
-              }))
-            }
-            disabled={pagination.skip === 0}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setPagination((prev) => ({
-                ...prev,
-                skip: prev.skip + prev.limit,
-              }))
-            }
-            disabled={currentPage >= totalPages}
-          >
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
-    </>
+
+      <div className="flex-shrink-0 pt-6 flex justify-end items-center space-x-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setPagination((prev) => ({
+              ...prev,
+              skip: Math.max(0, prev.skip - prev.limit),
+            }))
+          }
+          disabled={pagination.skip === 0}
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Previous
+        </Button>
+        <span className="text-sm text-muted-foreground">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setPagination((prev) => ({ ...prev, skip: prev.skip + prev.limit }))
+          }
+          disabled={currentPage >= totalPages}
+        >
+          Next
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
   );
 }
