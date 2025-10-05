@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-// Add types for the Google Translate objects on the window
 declare global {
   interface Window {
     googleTranslateElementInit: () => void;
