@@ -54,15 +54,14 @@ export default function DocumentsPage() {
       if (!isAuthenticated) return;
       setIsLoading(true);
       try {
-        const response = await apiClient.getDocuments({
-          skip: pagination.skip,
-          limit: pagination.limit,
-          department:
-            filters.department !== "all" ? filters.department : undefined,
-          category: filters.category !== "all" ? filters.category : undefined,
-        });
-        setDocuments(response.documents);
-        setTotalDocuments(response.total);
+        const response = await apiClient.getDocuments(
+          pagination.skip,
+          pagination.limit,
+          filters.department !== "all" ? filters.department : undefined,
+          filters.category !== "all" ? filters.category : undefined
+        );
+        setDocuments(response);
+        setTotalDocuments(response.length);
       } catch (error) {
         toast.error("Failed to fetch documents.");
       } finally {

@@ -31,7 +31,7 @@ export default function SignupPage() {
         const data = await apiClient.getDepartments();
         setDepartments(data);
       } catch (error) {
-        toast.error("Could not load departments.");
+        toast.error("Could not load department list.");
       }
     };
     fetchDepartments();
@@ -45,7 +45,7 @@ export default function SignupPage() {
     }
     setIsLoading(true);
     try {
-      await apiClient.register({
+      const { data } = await apiClient.axios.post("/users/register", {
         name,
         email,
         password,
@@ -56,8 +56,10 @@ export default function SignupPage() {
         description: "Your account is pending admin approval.",
       });
       router.push("/login");
-    } catch (error) {
-      toast.error("Registration failed.");
+    } catch (error: any) {
+      toast.error("Registration failed.", {
+        description: error.response?.data?.detail || "Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -70,7 +72,7 @@ export default function SignupPage() {
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Sign Up</h1>
             <p className="text-balance text-muted-foreground">
-              Enter your information to create an account
+              Enter your information to create an account for KMRL Chakra
             </p>
           </div>
           <form onSubmit={handleSubmit} className="grid gap-4">
@@ -100,11 +102,17 @@ export default function SignupPage() {
                   <SelectValue placeholder="Select a department" />
                 </SelectTrigger>
                 <SelectContent>
-                  {departments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
+                  {departments.length === 0 ? (
+                    <SelectItem value="loading" disabled>
+                      Loading...
                     </SelectItem>
-                  ))}
+                  ) : (
+                    departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>

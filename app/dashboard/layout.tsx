@@ -62,7 +62,7 @@ function SidebarNav() {
       icon: BellDotIcon,
       label: "Notifications",
     },
-    { href: "/dashboard/admin/roles", icon: Key, label: "Users" },
+    { href: "/dashboard/admin/roles", icon: Key, label: "Roles" },
   ];
 
   const isActive = (path: string) => {

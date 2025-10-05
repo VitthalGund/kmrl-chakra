@@ -47,8 +47,8 @@ export default function AdminNotificationsPage() {
         const fetchConfig = async () => {
           try {
             const [deptRes, rolesRes] = await Promise.all([
-              apiClient.axios.get("/config/departments"),
-              apiClient.axios.get("/config/roles"),
+              apiClient.axios.get("/api/v1/config/departments"),
+              apiClient.axios.get("/api/v1/config/roles"),
             ]);
             setDepartments(deptRes.data);
             setRoles(rolesRes.data);

@@ -152,10 +152,18 @@ class ApiClient {
     return res.data;
   }
 
-  async getDocuments(skip = 0, limit = 50): Promise<Document[]> {
-    const res = await this.axios.get(
-      `/api/v1/documents/?skip=${skip}&limit=${limit}`
-    );
+  async getDocuments(
+    skip = 0,
+    limit = 50,
+    department: string | undefined,
+    category: string | undefined
+  ): Promise<Document[]> {
+    const res = await this.axios.post(`/api/v1/documents/filter`, {
+      skip,
+      limit,
+      department,
+      category,
+    });
     return res.data;
   }
 
@@ -274,13 +282,40 @@ class ApiClient {
   }
 
   async getDepartments(): Promise<string[]> {
-    const response = await this.axios.get("/config/departments");
-    return response.data;
+    const { data } = await this.axios.get("/api/v1/config/departments");
+    return data;
   }
 
   async getRoles(): Promise<string[]> {
-    const response = await this.axios.get("/config/roles");
-    return response.data;
+    const { data } = await this.axios.get("/api/v1/config/roles");
+    return data;
+  }
+
+  async getAlertConfigs(): Promise<any[]> {
+    const { data } = await this.axios.get("/api/v1/alerts/config");
+    return data;
+  }
+
+  async createAlertConfig(config: {
+    monitored_email: string;
+    priority: string;
+  }): Promise<any> {
+    const { data } = await this.axios.post("/api/v1/alerts/config", config);
+    return data;
+  }
+
+  async deleteAlertConfig(configId: string): Promise<void> {
+    await this.axios.delete(`/api/v1/alerts/config/${configId}`);
+  }
+
+  async subscribeToPush(
+    subscription: PushSubscription
+  ): Promise<{ message: string }> {
+    const { data } = await this.axios.post(
+      "/api/v1/updates/subscribe",
+      subscription
+    );
+    return data;
   }
 }
 
