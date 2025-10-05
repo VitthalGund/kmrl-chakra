@@ -12,6 +12,7 @@ export interface RegisterRequest {
   email: string;
   department: string;
   password: string;
+  role: string;
 }
 
 export interface AuthResponse {
@@ -270,6 +271,16 @@ class ApiClient {
       `/api/v1/collaboration/chat/share/${shareId}`
     );
     return res.data;
+  }
+
+  async getDepartments(): Promise<string[]> {
+    const response = await this.axios.get("/config/departments");
+    return response.data;
+  }
+
+  async getRoles(): Promise<string[]> {
+    const response = await this.axios.get("/config/roles");
+    return response.data;
   }
 }
 

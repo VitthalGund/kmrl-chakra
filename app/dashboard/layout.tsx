@@ -19,6 +19,9 @@ import {
   BarChartBig,
   Menu,
   Bell,
+  UploadCloud,
+  BellDotIcon,
+  Key,
 } from "lucide-react";
 import {
   Accordion,
@@ -55,11 +58,25 @@ function SidebarNav() {
   const adminNavItems = [
     { href: "/dashboard/admin", icon: BarChartBig, label: "Analytics" },
     { href: "/dashboard/admin/users", icon: Users, label: "Users" },
+    { href: "/dashboard/admin/upload", icon: UploadCloud, label: "Upload" },
+    {
+      href: "/dashboard/admin/notifications",
+      icon: BellDotIcon,
+      label: "Notifications",
+    },
+    { href: "/dashboard/admin/roles", icon: Key, label: "Users" },
   ];
 
   const isActive = (path: string) => {
-    if (path === "/dashboard") return pathname === path;
-    return pathname.startsWith(path);
+    if (pathname === path) return true;
+
+    if (pathname.startsWith(path)) {
+      if (path === "/dashboard" && pathname === "/dashboard") {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   return (
