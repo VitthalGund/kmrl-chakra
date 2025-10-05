@@ -294,6 +294,37 @@ class ApiClient {
     }
     return response.json();
   }
+
+  async renameChat(
+    sessionId: string,
+    newTitle: string
+  ): Promise<{ message: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/collaboration/chat/sessions/${sessionId}`,
+      {
+        method: "PUT",
+        headers: this.getHeaders(),
+        body: JSON.stringify({ title: newTitle }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to rename chat");
+    }
+    return response.json();
+  }
+
+  async deleteChat(sessionId: string): Promise<void> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/collaboration/chat/sessions/${sessionId}`,
+      {
+        method: "DELETE",
+        headers: this.getHeaders(),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to delete chat");
+    }
+  }
 }
 
 export const apiClient = new ApiClient();
