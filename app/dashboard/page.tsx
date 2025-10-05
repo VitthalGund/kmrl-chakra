@@ -63,6 +63,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSearchParams } from "next/navigation";
 
 interface Conversation {
   id: string;
@@ -70,6 +71,8 @@ interface Conversation {
 }
 
 export default function KnowledgeDiscoveryPage() {
+  const searchParams = useSearchParams();
+
   useGoogleTranslate();
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -77,8 +80,10 @@ export default function KnowledgeDiscoveryPage() {
     string | null
   >(null);
   const [activeMessages, setActiveMessages] = useState<ChatMessage[]>([]);
+  const [targetLanguage, setTargetLanguage] = useState("en");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
 
@@ -93,7 +98,14 @@ export default function KnowledgeDiscoveryPage() {
       try {
         const sessions = await apiClient.getChatSessions();
         setConversations(sessions);
-        if (sessions.length > 0) {
+
+        const sessionIdFromUrl = searchParams.get("sessionId");
+        if (
+          sessionIdFromUrl &&
+          sessions.some((s) => s.id === sessionIdFromUrl)
+        ) {
+          handleSelectConversation(sessionIdFromUrl);
+        } else if (sessions.length > 0) {
           handleSelectConversation(sessions[0].id);
         } else {
           handleNewChat();
@@ -104,7 +116,16 @@ export default function KnowledgeDiscoveryPage() {
       }
     };
     if (user) loadConversations();
-  }, [user]);
+  }, [user, searchParams]);
+
+  useEffect(() => {
+    const select: HTMLSelectElement | null =
+      document.querySelector(".goog-te-combo");
+    if (select && select.value !== targetLanguage) {
+      select.value = targetLanguage;
+      select.dispatchEvent(new Event("change"));
+    }
+  }, [activeMessages, targetLanguage]);
 
   const scrollToBottom = () =>
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -166,7 +187,11 @@ export default function KnowledgeDiscoveryPage() {
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading || !activeConversationId) return;
-    const userMessage: ChatMessage = { role: "user", content: input };
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: input,
+      timestamp: new Date().toISOString(),
+    };
     setActiveMessages((prev) => [...prev, userMessage]);
     const currentInput = input;
     setInput("");
@@ -193,6 +218,7 @@ export default function KnowledgeDiscoveryPage() {
         role: "assistant",
         content: data.answer,
         sources: data.sources,
+        timestamp: new Date().toISOString(),
       };
       setActiveMessages((prev) => [...prev, assistantMessage]);
       setConversations((prev) =>
@@ -353,14 +379,8 @@ export default function KnowledgeDiscoveryPage() {
                   className="notranslate"
                 ></div>
                 <Select
-                  onValueChange={(lang) => {
-                    const select: HTMLSelectElement | null =
-                      document.querySelector(".goog-te-combo");
-                    if (select) {
-                      select.value = lang;
-                      select.dispatchEvent(new Event("change"));
-                    }
-                  }}
+                  value={targetLanguage}
+                  onValueChange={(lang) => setTargetLanguage(lang)}
                 >
                   <SelectTrigger className="w-[140px]">
                     <Languages className="h-4 w-4 mr-2" />

@@ -26,6 +26,7 @@ const SharedConversationPage = () => {
   const { conversationId } = useParams();
   const router = useRouter();
   const { user } = useAuth();
+  const [open, setOpen] = useState(false);
 
   const [conversation, setConversation] = useState<ChatSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -161,7 +162,10 @@ const SharedConversationPage = () => {
                                     <Button
                                       variant="outline"
                                       size="sm"
-                                      onClick={() => setPreviewSource(source)}
+                                      onClick={() => {
+                                        setOpen(true);
+                                        setPreviewSource(source);
+                                      }}
                                     >
                                       <Eye className="h-4 w-4 mr-2" />
                                       Preview
@@ -206,8 +210,8 @@ const SharedConversationPage = () => {
       {previewSource && (
         <DocPreview
           source={previewSource}
-          open={!!previewSource}
-          onOpenChange={() => setPreviewSource(null)}
+          isOpen={open}
+          onClose={() => setOpen(false)}
         />
       )}
     </AuthGuard>

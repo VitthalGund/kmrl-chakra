@@ -55,10 +55,12 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   sources?: Source[];
+  timestamp: string;
 }
 
 export interface ChatSession {
   id: string;
+  user_email: string;
   title: string;
   created_at: string;
   history: ChatMessage[];

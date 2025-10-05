@@ -13,6 +13,7 @@ interface DocPreviewProps {
   isOpen: boolean;
   onClose: () => void;
   source: {
+    id: string;
     file_name: string;
     storage_url?: string;
     file_type?: string;
