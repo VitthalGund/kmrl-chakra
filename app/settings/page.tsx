@@ -1,13 +1,25 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Separator } from "@/components/ui/separator"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import {
   User,
   Bell,
@@ -22,14 +34,14 @@ import {
   Globe,
   Shield,
   Loader2,
-} from "lucide-react"
-import Link from "next/link"
-import { useToast } from "@/hooks/use-toast"
+} from "lucide-react";
+import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
-  const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [notifications, setNotifications] = useState({
     email: true,
@@ -37,7 +49,7 @@ export default function SettingsPage() {
     dailyDigest: true,
     documentUpdates: true,
     systemAlerts: false,
-  })
+  });
 
   const [profile, setProfile] = useState({
     name: "Metro Worker",
@@ -47,77 +59,80 @@ export default function SettingsPage() {
     role: "Senior Operator",
     employeeId: "KMRL001",
     language: "english",
-  })
+  });
 
   const [languageSettings, setLanguageSettings] = useState({
     interfaceLanguage: "english",
     dateFormat: "dd/mm/yyyy",
     timeFormat: "24h",
     timezone: "ist",
-  })
+  });
 
   const [securitySettings, setSecuritySettings] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
     twoFactorEnabled: false,
-  })
+  });
 
   const [systemSettings, setSystemSettings] = useState({
     theme: "dark",
     itemsPerPage: "20",
     autoSaveInterval: "5",
-  })
+  });
 
   useEffect(() => {
-    const root = document.documentElement
+    const root = document.documentElement;
     if (systemSettings.theme === "dark") {
-      root.classList.add("dark")
-      root.style.colorScheme = "dark"
+      root.classList.add("dark");
+      root.style.colorScheme = "dark";
     } else if (systemSettings.theme === "light") {
-      root.classList.remove("dark")
-      root.style.colorScheme = "light"
+      root.classList.remove("dark");
+      root.style.colorScheme = "light";
     } else {
       // System theme
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
       if (prefersDark) {
-        root.classList.add("dark")
-        root.style.colorScheme = "dark"
+        root.classList.add("dark");
+        root.style.colorScheme = "dark";
       } else {
-        root.classList.remove("dark")
-        root.style.colorScheme = "light"
+        root.classList.remove("dark");
+        root.style.colorScheme = "light";
       }
     }
-  }, [systemSettings.theme])
+  }, [systemSettings.theme]);
 
   const handleSaveProfile = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Validate required fields
       if (!profile.name || !profile.email || !profile.employeeId) {
-        throw new Error("Please fill in all required fields")
+        throw new Error("Please fill in all required fields");
       }
 
       // Save to localStorage for persistence
-      localStorage.setItem("kmrl_profile", JSON.stringify(profile))
+      localStorage.setItem("kmrl_profile", JSON.stringify(profile));
 
       toast({
         title: "Profile Updated",
         description: "Your profile information has been saved successfully.",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save profile",
+        description:
+          error instanceof Error ? error.message : "Failed to save profile",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleResetProfile = () => {
     const defaultProfile = {
@@ -128,34 +143,34 @@ export default function SettingsPage() {
       role: "Senior Operator",
       employeeId: "KMRL001",
       language: "english",
-    }
-    setProfile(defaultProfile)
-    localStorage.removeItem("kmrl_profile")
+    };
+    setProfile(defaultProfile);
+    localStorage.removeItem("kmrl_profile");
     toast({
       title: "Profile Reset",
       description: "Profile information has been reset to defaults.",
-    })
-  }
+    });
+  };
 
   const handleSaveNotifications = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      localStorage.setItem("kmrl_notifications", JSON.stringify(notifications))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      localStorage.setItem("kmrl_notifications", JSON.stringify(notifications));
       toast({
         title: "Notifications Updated",
         description: "Your notification preferences have been saved.",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to save notification preferences",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleResetNotifications = () => {
     const defaultNotifications = {
@@ -164,34 +179,34 @@ export default function SettingsPage() {
       dailyDigest: true,
       documentUpdates: true,
       systemAlerts: false,
-    }
-    setNotifications(defaultNotifications)
-    localStorage.removeItem("kmrl_notifications")
+    };
+    setNotifications(defaultNotifications);
+    localStorage.removeItem("kmrl_notifications");
     toast({
       title: "Notifications Reset",
       description: "Notification preferences have been reset to defaults.",
-    })
-  }
+    });
+  };
 
   const handleSaveLanguage = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      localStorage.setItem("kmrl_language", JSON.stringify(languageSettings))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      localStorage.setItem("kmrl_language", JSON.stringify(languageSettings));
       toast({
         title: "Language Settings Updated",
         description: "Your language and regional preferences have been saved.",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to save language settings",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleResetLanguage = () => {
     const defaultLanguage = {
@@ -199,26 +214,32 @@ export default function SettingsPage() {
       dateFormat: "dd/mm/yyyy",
       timeFormat: "24h",
       timezone: "ist",
-    }
-    setLanguageSettings(defaultLanguage)
-    localStorage.removeItem("kmrl_language")
+    };
+    setLanguageSettings(defaultLanguage);
+    localStorage.removeItem("kmrl_language");
     toast({
       title: "Language Settings Reset",
       description: "Language settings have been reset to defaults.",
-    })
-  }
+    });
+  };
 
   const handleSaveSecurity = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      if (securitySettings.newPassword && securitySettings.newPassword !== securitySettings.confirmPassword) {
-        throw new Error("New passwords do not match")
+      if (
+        securitySettings.newPassword &&
+        securitySettings.newPassword !== securitySettings.confirmPassword
+      ) {
+        throw new Error("New passwords do not match");
       }
 
-      if (securitySettings.newPassword && securitySettings.newPassword.length < 8) {
-        throw new Error("Password must be at least 8 characters long")
+      if (
+        securitySettings.newPassword &&
+        securitySettings.newPassword.length < 8
+      ) {
+        throw new Error("Password must be at least 8 characters long");
       }
 
       // Clear password fields after successful save
@@ -227,87 +248,90 @@ export default function SettingsPage() {
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
-      })
+      });
 
       toast({
         title: "Security Updated",
         description: "Your security settings have been updated successfully.",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update security settings",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to update security settings",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleSaveSystem = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      localStorage.setItem("kmrl_system", JSON.stringify(systemSettings))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      localStorage.setItem("kmrl_system", JSON.stringify(systemSettings));
       toast({
         title: "System Settings Updated",
         description: "Your system preferences have been saved.",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to save system settings",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const handleResetSystem = () => {
     const defaultSystem = {
       theme: "dark",
       itemsPerPage: "20",
       autoSaveInterval: "5",
-    }
-    setSystemSettings(defaultSystem)
-    localStorage.removeItem("kmrl_system")
+    };
+    setSystemSettings(defaultSystem);
+    localStorage.removeItem("kmrl_system");
     toast({
       title: "System Settings Reset",
       description: "System settings have been reset to defaults.",
-    })
-  }
+    });
+  };
 
   const handleClearCache = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       toast({
         title: "Cache Cleared",
         description: "Application cache has been cleared successfully.",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to clear cache",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    const savedProfile = localStorage.getItem("kmrl_profile")
-    const savedNotifications = localStorage.getItem("kmrl_notifications")
-    const savedLanguage = localStorage.getItem("kmrl_language")
-    const savedSystem = localStorage.getItem("kmrl_system")
+    const savedProfile = localStorage.getItem("kmrl_profile");
+    const savedNotifications = localStorage.getItem("kmrl_notifications");
+    const savedLanguage = localStorage.getItem("kmrl_language");
+    const savedSystem = localStorage.getItem("kmrl_system");
 
-    if (savedProfile) setProfile(JSON.parse(savedProfile))
-    if (savedNotifications) setNotifications(JSON.parse(savedNotifications))
-    if (savedLanguage) setLanguageSettings(JSON.parse(savedLanguage))
-    if (savedSystem) setSystemSettings(JSON.parse(savedSystem))
-  }, [])
+    if (savedProfile) setProfile(JSON.parse(savedProfile));
+    if (savedNotifications) setNotifications(JSON.parse(savedNotifications));
+    if (savedLanguage) setLanguageSettings(JSON.parse(savedLanguage));
+    if (savedSystem) setSystemSettings(JSON.parse(savedSystem));
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -318,20 +342,34 @@ export default function SettingsPage() {
             <div className="flex items-center space-x-3">
               <Link href="/dashboard" className="flex items-center space-x-2">
                 <Train className="h-6 w-6 text-primary" />
-                <span className="font-bold text-lg text-gray-200">KMRL Chakra</span>
+                <span className="font-bold text-lg text-gray-200">
+                  KMRL Chakra
+                </span>
               </Link>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/dashboard" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/dashboard"
+                className="text-gray-300 hover:text-primary transition-colors"
+              >
                 Dashboard
               </Link>
-              <Link href="/documents" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/documents"
+                className="text-gray-300 hover:text-primary transition-colors"
+              >
                 Documents
               </Link>
-              <Link href="/search" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/search"
+                className="text-gray-300 hover:text-primary transition-colors"
+              >
                 Search
               </Link>
-              <Link href="/analytics" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/analytics"
+                className="text-gray-300 hover:text-primary transition-colors"
+              >
                 Analytics
               </Link>
               <Link href="/settings" className="text-primary font-medium">
@@ -348,7 +386,9 @@ export default function SettingsPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 text-gray-200">Settings</h1>
-          <p className="text-gray-400">Customize your KMRL Chakra experience and manage your preferences.</p>
+          <p className="text-gray-400">
+            Customize your KMRL Chakra experience and manage your preferences.
+          </p>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
@@ -405,7 +445,9 @@ export default function SettingsPage() {
                     <Input
                       id="name"
                       value={profile.name}
-                      onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, name: e.target.value })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                       required
                     />
@@ -418,7 +460,9 @@ export default function SettingsPage() {
                       id="email"
                       type="email"
                       value={profile.email}
-                      onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, email: e.target.value })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                       required
                     />
@@ -435,7 +479,9 @@ export default function SettingsPage() {
                     <Input
                       id="phone"
                       value={profile.phone}
-                      onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, phone: e.target.value })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                     />
                   </div>
@@ -446,7 +492,9 @@ export default function SettingsPage() {
                     <Input
                       id="employeeid"
                       value={profile.employeeId}
-                      onChange={(e) => setProfile({ ...profile, employeeId: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, employeeId: e.target.value })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                       required
                     />
@@ -462,7 +510,9 @@ export default function SettingsPage() {
                     </Label>
                     <Select
                       value={profile.department}
-                      onValueChange={(value) => setProfile({ ...profile, department: value })}
+                      onValueChange={(value) =>
+                        setProfile({ ...profile, department: value })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
@@ -471,13 +521,19 @@ export default function SettingsPage() {
                         <SelectItem value="Operations">Operations</SelectItem>
                         <SelectItem value="Maintenance">Maintenance</SelectItem>
                         <SelectItem value="Safety">Safety</SelectItem>
-                        <SelectItem value="Human Resources">Human Resources</SelectItem>
+                        <SelectItem value="Human Resources">
+                          Human Resources
+                        </SelectItem>
                         <SelectItem value="Finance">Finance</SelectItem>
                         <SelectItem value="Management">Management</SelectItem>
                         <SelectItem value="Engineering">Engineering</SelectItem>
-                        <SelectItem value="Customer Service">Customer Service</SelectItem>
+                        <SelectItem value="Customer Service">
+                          Customer Service
+                        </SelectItem>
                         <SelectItem value="Security">Security</SelectItem>
-                        <SelectItem value="IT">Information Technology</SelectItem>
+                        <SelectItem value="IT">
+                          Information Technology
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -488,7 +544,9 @@ export default function SettingsPage() {
                     <Input
                       id="role"
                       value={profile.role}
-                      onChange={(e) => setProfile({ ...profile, role: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, role: e.target.value })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                     />
                   </div>
@@ -506,8 +564,16 @@ export default function SettingsPage() {
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Reset
                   </Button>
-                  <Button onClick={handleSaveProfile} className="w-full sm:w-auto" disabled={isSaving}>
-                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  <Button
+                    onClick={handleSaveProfile}
+                    className="w-full sm:w-auto"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     {isSaving ? "Saving..." : "Save Changes"}
                   </Button>
                 </div>
@@ -562,43 +628,82 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div>
-                      <Label className="text-base font-medium text-gray-200">Email Notifications</Label>
-                      <p className="text-sm text-gray-400">Receive updates via email</p>
+                      <Label className="text-base font-medium text-gray-200">
+                        Email Notifications
+                      </Label>
+                      <p className="text-sm text-gray-400">
+                        Receive updates via email
+                      </p>
                     </div>
                     <Button
                       variant={notifications.email ? "default" : "outline"}
                       size="sm"
-                      onClick={() => setNotifications({ ...notifications, email: !notifications.email })}
-                      className={notifications.email ? "bg-primary" : "bg-transparent border-gray-600 text-gray-300"}
+                      onClick={() =>
+                        setNotifications({
+                          ...notifications,
+                          email: !notifications.email,
+                        })
+                      }
+                      className={
+                        notifications.email
+                          ? "bg-primary"
+                          : "bg-transparent border-gray-600 text-gray-300"
+                      }
                     >
                       {notifications.email ? "Enabled" : "Disabled"}
                     </Button>
                   </div>
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div>
-                      <Label className="text-base font-medium text-gray-200">WhatsApp Notifications</Label>
-                      <p className="text-sm text-gray-400">Get instant updates on WhatsApp</p>
+                      <Label className="text-base font-medium text-gray-200">
+                        WhatsApp Notifications
+                      </Label>
+                      <p className="text-sm text-gray-400">
+                        Get instant updates on WhatsApp
+                      </p>
                     </div>
                     <Button
                       variant={notifications.whatsapp ? "default" : "outline"}
                       size="sm"
-                      onClick={() => setNotifications({ ...notifications, whatsapp: !notifications.whatsapp })}
-                      className={notifications.whatsapp ? "bg-primary" : "bg-transparent border-gray-600 text-gray-300"}
+                      onClick={() =>
+                        setNotifications({
+                          ...notifications,
+                          whatsapp: !notifications.whatsapp,
+                        })
+                      }
+                      className={
+                        notifications.whatsapp
+                          ? "bg-primary"
+                          : "bg-transparent border-gray-600 text-gray-300"
+                      }
                     >
                       {notifications.whatsapp ? "Enabled" : "Disabled"}
                     </Button>
                   </div>
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div>
-                      <Label className="text-base font-medium text-gray-200">Daily Digest</Label>
-                      <p className="text-sm text-gray-400">Daily summary of activities</p>
+                      <Label className="text-base font-medium text-gray-200">
+                        Daily Digest
+                      </Label>
+                      <p className="text-sm text-gray-400">
+                        Daily summary of activities
+                      </p>
                     </div>
                     <Button
-                      variant={notifications.dailyDigest ? "default" : "outline"}
+                      variant={
+                        notifications.dailyDigest ? "default" : "outline"
+                      }
                       size="sm"
-                      onClick={() => setNotifications({ ...notifications, dailyDigest: !notifications.dailyDigest })}
+                      onClick={() =>
+                        setNotifications({
+                          ...notifications,
+                          dailyDigest: !notifications.dailyDigest,
+                        })
+                      }
                       className={
-                        notifications.dailyDigest ? "bg-primary" : "bg-transparent border-gray-600 text-gray-300"
+                        notifications.dailyDigest
+                          ? "bg-primary"
+                          : "bg-transparent border-gray-600 text-gray-300"
                       }
                     >
                       {notifications.dailyDigest ? "Enabled" : "Disabled"}
@@ -606,17 +711,28 @@ export default function SettingsPage() {
                   </div>
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div>
-                      <Label className="text-base font-medium text-gray-200">Document Updates</Label>
-                      <p className="text-sm text-gray-400">New document notifications</p>
+                      <Label className="text-base font-medium text-gray-200">
+                        Document Updates
+                      </Label>
+                      <p className="text-sm text-gray-400">
+                        New document notifications
+                      </p>
                     </div>
                     <Button
-                      variant={notifications.documentUpdates ? "default" : "outline"}
+                      variant={
+                        notifications.documentUpdates ? "default" : "outline"
+                      }
                       size="sm"
                       onClick={() =>
-                        setNotifications({ ...notifications, documentUpdates: !notifications.documentUpdates })
+                        setNotifications({
+                          ...notifications,
+                          documentUpdates: !notifications.documentUpdates,
+                        })
                       }
                       className={
-                        notifications.documentUpdates ? "bg-primary" : "bg-transparent border-gray-600 text-gray-300"
+                        notifications.documentUpdates
+                          ? "bg-primary"
+                          : "bg-transparent border-gray-600 text-gray-300"
                       }
                     >
                       {notifications.documentUpdates ? "Enabled" : "Disabled"}
@@ -624,15 +740,28 @@ export default function SettingsPage() {
                   </div>
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div>
-                      <Label className="text-base font-medium text-gray-200">System Alerts</Label>
-                      <p className="text-sm text-gray-400">Critical system notifications</p>
+                      <Label className="text-base font-medium text-gray-200">
+                        System Alerts
+                      </Label>
+                      <p className="text-sm text-gray-400">
+                        Critical system notifications
+                      </p>
                     </div>
                     <Button
-                      variant={notifications.systemAlerts ? "default" : "outline"}
+                      variant={
+                        notifications.systemAlerts ? "default" : "outline"
+                      }
                       size="sm"
-                      onClick={() => setNotifications({ ...notifications, systemAlerts: !notifications.systemAlerts })}
+                      onClick={() =>
+                        setNotifications({
+                          ...notifications,
+                          systemAlerts: !notifications.systemAlerts,
+                        })
+                      }
                       className={
-                        notifications.systemAlerts ? "bg-primary" : "bg-transparent border-gray-600 text-gray-300"
+                        notifications.systemAlerts
+                          ? "bg-primary"
+                          : "bg-transparent border-gray-600 text-gray-300"
                       }
                     >
                       {notifications.systemAlerts ? "Enabled" : "Disabled"}
@@ -649,8 +778,16 @@ export default function SettingsPage() {
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Reset
                   </Button>
-                  <Button onClick={handleSaveNotifications} className="w-full sm:w-auto" disabled={isSaving}>
-                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  <Button
+                    onClick={handleSaveNotifications}
+                    className="w-full sm:w-auto"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     {isSaving ? "Saving..." : "Save Preferences"}
                   </Button>
                 </div>
@@ -672,12 +809,20 @@ export default function SettingsPage() {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="interface-language" className="text-gray-300">
+                    <Label
+                      htmlFor="interface-language"
+                      className="text-gray-300"
+                    >
                       Interface Language
                     </Label>
                     <Select
                       value={languageSettings.interfaceLanguage}
-                      onValueChange={(value) => setLanguageSettings({ ...languageSettings, interfaceLanguage: value })}
+                      onValueChange={(value) =>
+                        setLanguageSettings({
+                          ...languageSettings,
+                          interfaceLanguage: value,
+                        })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
@@ -695,7 +840,12 @@ export default function SettingsPage() {
                     </Label>
                     <Select
                       value={languageSettings.dateFormat}
-                      onValueChange={(value) => setLanguageSettings({ ...languageSettings, dateFormat: value })}
+                      onValueChange={(value) =>
+                        setLanguageSettings({
+                          ...languageSettings,
+                          dateFormat: value,
+                        })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
@@ -713,7 +863,12 @@ export default function SettingsPage() {
                     </Label>
                     <Select
                       value={languageSettings.timeFormat}
-                      onValueChange={(value) => setLanguageSettings({ ...languageSettings, timeFormat: value })}
+                      onValueChange={(value) =>
+                        setLanguageSettings({
+                          ...languageSettings,
+                          timeFormat: value,
+                        })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
@@ -730,13 +885,20 @@ export default function SettingsPage() {
                     </Label>
                     <Select
                       value={languageSettings.timezone}
-                      onValueChange={(value) => setLanguageSettings({ ...languageSettings, timezone: value })}
+                      onValueChange={(value) =>
+                        setLanguageSettings({
+                          ...languageSettings,
+                          timezone: value,
+                        })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ist">India Standard Time (IST)</SelectItem>
+                        <SelectItem value="ist">
+                          India Standard Time (IST)
+                        </SelectItem>
                         <SelectItem value="utc">UTC</SelectItem>
                         <SelectItem value="gmt">GMT</SelectItem>
                       </SelectContent>
@@ -753,8 +915,16 @@ export default function SettingsPage() {
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Reset
                   </Button>
-                  <Button onClick={handleSaveLanguage} className="w-full sm:w-auto" disabled={isSaving}>
-                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  <Button
+                    onClick={handleSaveLanguage}
+                    className="w-full sm:w-auto"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     {isSaving ? "Saving..." : "Save Settings"}
                   </Button>
                 </div>
@@ -769,7 +939,9 @@ export default function SettingsPage() {
                   <Shield className="h-5 w-5 mr-2" />
                   Security Settings
                 </CardTitle>
-                <CardDescription className="text-gray-400">Manage your account security and privacy</CardDescription>
+                <CardDescription className="text-gray-400">
+                  Manage your account security and privacy
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
@@ -782,7 +954,12 @@ export default function SettingsPage() {
                       type="password"
                       placeholder="Enter current password"
                       value={securitySettings.currentPassword}
-                      onChange={(e) => setSecuritySettings({ ...securitySettings, currentPassword: e.target.value })}
+                      onChange={(e) =>
+                        setSecuritySettings({
+                          ...securitySettings,
+                          currentPassword: e.target.value,
+                        })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                     />
                   </div>
@@ -795,7 +972,12 @@ export default function SettingsPage() {
                       type="password"
                       placeholder="Enter new password"
                       value={securitySettings.newPassword}
-                      onChange={(e) => setSecuritySettings({ ...securitySettings, newPassword: e.target.value })}
+                      onChange={(e) =>
+                        setSecuritySettings({
+                          ...securitySettings,
+                          newPassword: e.target.value,
+                        })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                     />
                   </div>
@@ -808,20 +990,35 @@ export default function SettingsPage() {
                       type="password"
                       placeholder="Confirm new password"
                       value={securitySettings.confirmPassword}
-                      onChange={(e) => setSecuritySettings({ ...securitySettings, confirmPassword: e.target.value })}
+                      onChange={(e) =>
+                        setSecuritySettings({
+                          ...securitySettings,
+                          confirmPassword: e.target.value,
+                        })
+                      }
                       className="bg-gray-800 border-gray-700 text-gray-200"
                     />
                   </div>
                 </div>
                 <div className="border-t border-border pt-6">
-                  <h4 className="text-lg font-medium mb-4 text-gray-200">Two-Factor Authentication</h4>
+                  <h4 className="text-lg font-medium mb-4 text-gray-200">
+                    Two-Factor Authentication
+                  </h4>
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div>
-                      <Label className="text-base font-medium text-gray-200">Enable 2FA</Label>
-                      <p className="text-sm text-gray-400">Add extra security to your account</p>
+                      <Label className="text-base font-medium text-gray-200">
+                        Enable 2FA
+                      </Label>
+                      <p className="text-sm text-gray-400">
+                        Add extra security to your account
+                      </p>
                     </div>
                     <Button
-                      variant={securitySettings.twoFactorEnabled ? "default" : "outline"}
+                      variant={
+                        securitySettings.twoFactorEnabled
+                          ? "default"
+                          : "outline"
+                      }
                       onClick={() =>
                         setSecuritySettings({
                           ...securitySettings,
@@ -834,24 +1031,36 @@ export default function SettingsPage() {
                           : "bg-transparent border-gray-600 text-gray-300"
                       }
                     >
-                      {securitySettings.twoFactorEnabled ? "Enabled" : "Setup 2FA"}
+                      {securitySettings.twoFactorEnabled
+                        ? "Enabled"
+                        : "Setup 2FA"}
                     </Button>
                   </div>
                 </div>
                 <div className="border-t border-border pt-6">
-                  <h4 className="text-lg font-medium mb-4 text-gray-200">Active Sessions</h4>
+                  <h4 className="text-lg font-medium mb-4 text-gray-200">
+                    Active Sessions
+                  </h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div>
-                        <p className="font-medium text-gray-200">Current Session</p>
-                        <p className="text-sm text-gray-400">Chrome on Windows • Kochi, Kerala</p>
+                        <p className="font-medium text-gray-200">
+                          Current Session
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          Chrome on Windows • Kochi, Kerala
+                        </p>
                       </div>
-                      <span className="text-sm text-green-400 bg-green-400/20 px-2 py-1 rounded">Active</span>
+                      <span className="text-sm text-green-400 bg-green-400/20 px-2 py-1 rounded">
+                        Active
+                      </span>
                     </div>
                     <div className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div>
                         <p className="font-medium text-gray-200">Mobile App</p>
-                        <p className="text-sm text-gray-400">Android • Last seen 2 hours ago</p>
+                        <p className="text-sm text-gray-400">
+                          Android • Last seen 2 hours ago
+                        </p>
                       </div>
                       <Button
                         variant="outline"
@@ -871,8 +1080,16 @@ export default function SettingsPage() {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleSaveSecurity} className="w-full sm:w-auto" disabled={isSaving}>
-                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  <Button
+                    onClick={handleSaveSecurity}
+                    className="w-full sm:w-auto"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     {isSaving ? "Updating..." : "Update Password"}
                   </Button>
                 </div>
@@ -899,7 +1116,9 @@ export default function SettingsPage() {
                     </Label>
                     <Select
                       value={systemSettings.theme}
-                      onValueChange={(value) => setSystemSettings({ ...systemSettings, theme: value })}
+                      onValueChange={(value) =>
+                        setSystemSettings({ ...systemSettings, theme: value })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
@@ -917,7 +1136,12 @@ export default function SettingsPage() {
                     </Label>
                     <Select
                       value={systemSettings.itemsPerPage}
-                      onValueChange={(value) => setSystemSettings({ ...systemSettings, itemsPerPage: value })}
+                      onValueChange={(value) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          itemsPerPage: value,
+                        })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
@@ -936,7 +1160,12 @@ export default function SettingsPage() {
                     </Label>
                     <Select
                       value={systemSettings.autoSaveInterval}
-                      onValueChange={(value) => setSystemSettings({ ...systemSettings, autoSaveInterval: value })}
+                      onValueChange={(value) =>
+                        setSystemSettings({
+                          ...systemSettings,
+                          autoSaveInterval: value,
+                        })
+                      }
                     >
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
                         <SelectValue />
@@ -954,12 +1183,18 @@ export default function SettingsPage() {
                 <Separator className="bg-gray-700" />
 
                 <div>
-                  <h4 className="text-lg font-medium mb-4 text-gray-200">Data & Storage</h4>
+                  <h4 className="text-lg font-medium mb-4 text-gray-200">
+                    Data & Storage
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                       <div>
-                        <Label className="text-base font-medium text-gray-200">Cache Size</Label>
-                        <p className="text-sm text-gray-400">Current cache: 245 MB</p>
+                        <Label className="text-base font-medium text-gray-200">
+                          Cache Size
+                        </Label>
+                        <p className="text-sm text-gray-400">
+                          Current cache: 245 MB
+                        </p>
                       </div>
                       <Button
                         variant="outline"
@@ -968,13 +1203,21 @@ export default function SettingsPage() {
                         disabled={isLoading}
                         className="bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800"
                       >
-                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Clear Cache"}
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "Clear Cache"
+                        )}
                       </Button>
                     </div>
                     <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                       <div>
-                        <Label className="text-base font-medium text-gray-200">Download Location</Label>
-                        <p className="text-sm text-gray-400">/Downloads/KMRL-Documents</p>
+                        <Label className="text-base font-medium text-gray-200">
+                          Download Location
+                        </Label>
+                        <p className="text-sm text-gray-400">
+                          /Downloads/KMRL-Documents
+                        </p>
                       </div>
                       <Button
                         variant="outline"
@@ -990,15 +1233,21 @@ export default function SettingsPage() {
                 <Separator className="bg-gray-700" />
 
                 <div>
-                  <h4 className="text-lg font-medium mb-4 text-gray-200">System Information</h4>
+                  <h4 className="text-lg font-medium mb-4 text-gray-200">
+                    System Information
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 border border-border rounded-lg">
                       <p className="text-gray-400 text-sm">Version</p>
-                      <p className="font-medium text-gray-200">KMRL Chakra v2.1.0</p>
+                      <p className="font-medium text-gray-200">
+                        KMRL Chakra v2.1.0
+                      </p>
                     </div>
                     <div className="p-4 border border-border rounded-lg">
                       <p className="text-gray-400 text-sm">Last Updated</p>
-                      <p className="font-medium text-gray-200">January 15, 2025</p>
+                      <p className="font-medium text-gray-200">
+                        January 15, 2025
+                      </p>
                     </div>
                     <div className="p-4 border border-border rounded-lg">
                       <p className="text-gray-400 text-sm">Database</p>
@@ -1023,8 +1272,16 @@ export default function SettingsPage() {
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Reset to Defaults
                   </Button>
-                  <Button onClick={handleSaveSystem} className="w-full sm:w-auto" disabled={isSaving}>
-                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  <Button
+                    onClick={handleSaveSystem}
+                    className="w-full sm:w-auto"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     {isSaving ? "Saving..." : "Save Changes"}
                   </Button>
                 </div>
@@ -1034,5 +1291,5 @@ export default function SettingsPage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

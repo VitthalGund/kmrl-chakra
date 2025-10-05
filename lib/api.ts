@@ -66,7 +66,7 @@ export interface Notification {
 }
 
 class ApiClient {
-  private axios: AxiosInstance;
+  public axios: AxiosInstance;
 
   constructor() {
     this.axios = axios.create({ baseURL: API_BASE_URL });
