@@ -1,5 +1,3 @@
-// app/dashboard/search/page.tsx
-
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -73,8 +71,7 @@ interface Conversation {
 export default function KnowledgeDiscoveryPage() {
   const searchParams = useSearchParams();
 
-  const da = useGoogleTranslate();
-  console.log({ da });
+  useGoogleTranslate();
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<
@@ -120,12 +117,11 @@ export default function KnowledgeDiscoveryPage() {
   }, [user, searchParams]);
 
   useEffect(() => {
-    const langSelect: HTMLSelectElement | null =
+    const select: HTMLSelectElement | null =
       document.querySelector(".goog-te-combo");
-    console.log({ targetLanguage });
-    if (langSelect && langSelect.value !== targetLanguage) {
-      langSelect.value = targetLanguage;
-      langSelect.dispatchEvent(new Event("change"));
+    if (select) {
+      select.value = targetLanguage;
+      select.dispatchEvent(new Event("change"));
     }
   }, [targetLanguage]);
 

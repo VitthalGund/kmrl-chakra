@@ -148,7 +148,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
+        <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
               Total Documents
@@ -161,7 +161,7 @@ export default function AdminAnalyticsPage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">AI Queries</CardTitle>
             <Bot className="h-4 w-4 text-muted-foreground" />
@@ -172,7 +172,7 @@ export default function AdminAnalyticsPage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -183,7 +183,7 @@ export default function AdminAnalyticsPage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-4">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -197,7 +197,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card>
+        <Card className="p-4">
           <CardHeader>
             <CardTitle className="text-foreground">Monthly Trends</CardTitle>
             <CardDescription>
@@ -218,7 +218,7 @@ export default function AdminAnalyticsPage() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-4">
           <CardHeader>
             <CardTitle className="text-foreground">Department Usage</CardTitle>
             <CardDescription>

@@ -124,7 +124,9 @@ export default function SearchPage() {
                   : "bg-muted"
               }`}
             >
-              <ReactMarkdown className="prose dark:prose-invert">
+              <ReactMarkdown
+              // className="prose dark:prose-invert"
+              >
                 {message.content}
               </ReactMarkdown>
 

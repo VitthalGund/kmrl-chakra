@@ -42,7 +42,7 @@ export default function NotificationsPage() {
         </p>
       </div>
 
-      <Card>
+      <Card className="p-4">
         <CardHeader>
           <CardTitle>Your Feed</CardTitle>
         </CardHeader>
