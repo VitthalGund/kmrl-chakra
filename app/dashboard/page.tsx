@@ -73,7 +73,8 @@ interface Conversation {
 export default function KnowledgeDiscoveryPage() {
   const searchParams = useSearchParams();
 
-  useGoogleTranslate();
+  const da = useGoogleTranslate();
+  console.log({ da });
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<
@@ -119,13 +120,14 @@ export default function KnowledgeDiscoveryPage() {
   }, [user, searchParams]);
 
   useEffect(() => {
-    const select: HTMLSelectElement | null =
+    const langSelect: HTMLSelectElement | null =
       document.querySelector(".goog-te-combo");
-    if (select && select.value !== targetLanguage) {
-      select.value = targetLanguage;
-      select.dispatchEvent(new Event("change"));
+    console.log({ targetLanguage });
+    if (langSelect && langSelect.value !== targetLanguage) {
+      langSelect.value = targetLanguage;
+      langSelect.dispatchEvent(new Event("change"));
     }
-  }, [activeMessages, targetLanguage]);
+  }, [targetLanguage]);
 
   const scrollToBottom = () =>
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -250,7 +252,6 @@ export default function KnowledgeDiscoveryPage() {
     setPreviewSource(source);
     setIsPreviewOpen(true);
   };
-  console.log({ conversations });
 
   return (
     <div className="flex h-full w-full">
@@ -407,7 +408,7 @@ export default function KnowledgeDiscoveryPage() {
             </header>
             <div className="flex-grow overflow-hidden">
               <ScrollArea className="h-full">
-                <div className="p-6 space-y-6 max-w-4xl max-h-[calc(100vh-200px)] mx-auto">
+                <div className="p-6 space-y-6 max-w-4xl max-h-[calc(100vh-200px)] mx-auto notranslate">
                   {activeMessages.map((message, index) => (
                     <div
                       key={index}

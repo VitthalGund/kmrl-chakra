@@ -1,11 +1,22 @@
-// hooks/use-google-translate.ts
-
 import { useEffect } from "react";
 
+// Add types for the Google Translate objects on the window
 declare global {
   interface Window {
     googleTranslateElementInit: () => void;
-    google: any;
+    google: {
+      translate: {
+        TranslateElement: new (
+          options: {
+            pageLanguage: string;
+            includedLanguages: string;
+            layout: any;
+            autoDisplay: boolean;
+          },
+          elementId: string
+        ) => void;
+      };
+    };
   }
 }
 
@@ -22,39 +33,28 @@ export const useGoogleTranslate = () => {
       new window.google.translate.TranslateElement(
         {
           pageLanguage: "en",
-          includedLanguages: "en,ml,hi,ta",
-          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+          includedLanguages: "en,ml,hi,ta", // Your desired languages
+          layout: (window as any).google.translate.TranslateElement.InlineLayout
+            .SIMPLE,
           autoDisplay: false,
         },
         "google_translate_element"
       );
     };
 
+    // Style to hide the default Google Translate UI
     const style = document.createElement("style");
     style.innerHTML = `
-      #google_translate_element,
-      .goog-te-banner-frame,
-      .goog-te-gadget-simple,
-      .goog-te-gadget-icon {
+      #google_translate_element, .skiptranslate {
         display: none !important;
       }
       body {
         top: 0 !important;
       }
-      .goog-tooltip {
-        display: none !important;
-      }
-      .goog-tooltip:hover {
-        display: none !important;
-      }
-      .goog-text-highlight {
-        background-color: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
     `;
     document.head.appendChild(style);
 
+    // Cleanup on component unmount
     return () => {
       document.body.removeChild(addScript);
       document.head.removeChild(style);
