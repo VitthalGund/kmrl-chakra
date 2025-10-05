@@ -1,3 +1,5 @@
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export interface LoginRequest {
@@ -18,18 +20,18 @@ export interface AuthResponse {
   token_type: string;
 }
 
-export interface AdminUserList {
-  total: number;
-  users: User[];
-}
-
 export interface User {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   department: string;
   role: string;
   status: string;
+}
+
+export interface AdminUserList {
+  total: number;
+  users: User[];
 }
 
 export interface Document {
@@ -64,19 +66,60 @@ export interface Notification {
 }
 
 class ApiClient {
-  private getHeaders(includeAuth = true): HeadersInit {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
+  private axios: AxiosInstance;
 
-    if (includeAuth && typeof window !== "undefined") {
+  constructor() {
+    this.axios = axios.create({ baseURL: API_BASE_URL });
+
+    this.axios.interceptors.request.use((config: AxiosRequestConfig) => {
       const token = localStorage.getItem("access_token");
       if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    }
+      return config;
+    });
 
-    return headers;
+    this.axios.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => {
+        const originalRequest = error.config as any;
+
+        if (
+          error.response?.status === 401 &&
+          !originalRequest._retry &&
+          localStorage.getItem("refresh_token")
+        ) {
+          originalRequest._retry = true;
+          try {
+            const refreshToken = localStorage.getItem("refresh_token");
+            const { data } = await axios.post(
+              `${API_BASE_URL}/api/v1/users/refresh`,
+              {
+                refresh_token: refreshToken,
+              }
+            );
+
+            const { access_token } = data;
+            localStorage.setItem("access_token", access_token);
+
+            this.axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${access_token}`;
+            originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
+
+            return this.axios(originalRequest);
+          } catch (refreshError) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            window.location.href = "/login";
+            return Promise.reject(refreshError);
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
 
   async login(data: LoginRequest): Promise<AuthResponse> {
@@ -84,156 +127,73 @@ class ApiClient {
     formData.append("username", data.username);
     formData.append("password", data.password);
 
-    const response = await fetch(`${API_BASE_URL}/api/v1/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formData,
+    const res = await this.axios.post("/api/v1/users/login", formData, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
-
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    return response.json();
+    return res.data;
   }
 
   async register(data: RegisterRequest): Promise<{ message: string }> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/users/register`, {
-      method: "POST",
-      headers: this.getHeaders(false),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error("Registration failed");
-    }
-
-    return response.json();
+    const res = await this.axios.post("/api/v1/users/register", data);
+    return res.data;
   }
 
   async getCurrentUser(): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
-      headers: this.getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch user");
-    }
-
-    return response.json();
+    const res = await this.axios.get("/api/v1/users/me");
+    return res.data;
   }
 
   async getDocuments(skip = 0, limit = 50): Promise<Document[]> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/documents/?skip=${skip}&limit=${limit}`,
-      {
-        headers: this.getHeaders(),
-      }
+    const res = await this.axios.get(
+      `/api/v1/documents/?skip=${skip}&limit=${limit}`
     );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch documents");
-    }
-
-    return response.json();
+    return res.data;
   }
 
   async uploadDocument(formData: FormData): Promise<{ message: string }> {
-    const token = localStorage.getItem("access_token");
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/documents/upload-file`,
+    const res = await this.axios.post(
+      "/api/v1/documents/upload-file",
+      formData,
       {
-        method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
-        body: formData,
       }
     );
-
-    if (!response.ok) {
-      throw new Error("Failed to upload document");
-    }
-
-    return response.json();
+    return res.data;
   }
 
   async getNotifications(): Promise<Notification[]> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/notifications/feed`, {
-      headers: this.getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch notifications");
-    }
-
-    return response.json();
+    const res = await this.axios.get("/api/v1/notifications/feed");
+    return res.data;
   }
 
   async getAdminUsers(status?: string): Promise<AdminUserList> {
     const url = status
-      ? `${API_BASE_URL}/api/v1/admin/users/?status=${status}`
-      : `${API_BASE_URL}/api/v1/admin/users/`;
-
-    const response = await fetch(url, {
-      headers: this.getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch users");
-    }
-
-    return response.json();
+      ? `/api/v1/admin/users/?status=${status}`
+      : "/api/v1/admin/users/";
+    const res = await this.axios.get(url);
+    return res.data;
   }
 
   async approveUser(
     userId: string,
     role: string
   ): Promise<{ message: string }> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/admin/users/${userId}/approve`,
-      {
-        method: "POST",
-        headers: this.getHeaders(),
-        body: JSON.stringify({ role }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to approve user");
-    }
-
-    return response.json();
+    const res = await this.axios.post(`/api/v1/admin/users/${userId}/approve`, {
+      role,
+    });
+    return res.data;
   }
 
   async rejectUser(userId: string): Promise<{ message: string }> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/admin/users/${userId}/reject`,
-      {
-        method: "POST",
-        headers: this.getHeaders(),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to reject user");
-    }
-
-    return response.json();
+    const res = await this.axios.post(`/api/v1/admin/users/${userId}/reject`);
+    return res.data;
   }
 
   async getAnalytics(): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/api/v1/analytics/`, {
-      headers: this.getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch analytics");
-    }
-
-    return response.json();
+    const res = await this.axios.get("/api/v1/analytics/");
+    return res.data;
   }
 
   getChatStreamUrl(
@@ -241,89 +201,53 @@ class ApiClient {
     query: string,
     targetLanguage = "en"
   ): string {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token") || "";
     const params = new URLSearchParams({
       query,
       session_id: sessionId,
       target_language: targetLanguage,
-      token: token || "",
+      token,
     });
+
     return `${API_BASE_URL}/api/v1/query/chat?${params}`;
   }
 
   async shareChat(
     sessionId: string
   ): Promise<{ shareable_link: string; share_id: string }> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/collaboration/chat/${sessionId}/share`,
-      {
-        method: "POST",
-        headers: this.getHeaders(),
-      }
+    const res = await this.axios.post(
+      `/api/v1/collaboration/chat/${sessionId}/share`
     );
-
-    if (!response.ok) {
-      throw new Error("Failed to create shareable link");
-    }
-
-    return response.json();
+    return res.data;
   }
 
   async getChatSessions(): Promise<{ id: string; title: string }[]> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/collaboration/chat/sessions`,
-      {
-        headers: this.getHeaders(),
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch chat sessions");
-    }
-    return response.json();
+    const res = await this.axios.get("/api/v1/collaboration/chat/sessions");
+    return res.data;
   }
 
   async getChatSessionDetails(sessionId: string): Promise<any> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/collaboration/chat/sessions/${sessionId}`,
-      {
-        headers: this.getHeaders(),
-      }
+    const res = await this.axios.get(
+      `/api/v1/collaboration/chat/sessions/${sessionId}`
     );
-    if (!response.ok) {
-      throw new Error("Failed to fetch chat session details");
-    }
-    return response.json();
+    return res.data;
   }
 
   async renameChat(
     sessionId: string,
     newTitle: string
   ): Promise<{ message: string }> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/collaboration/chat/sessions/${sessionId}`,
+    const res = await this.axios.put(
+      `/api/v1/collaboration/chat/sessions/${sessionId}`,
       {
-        method: "PUT",
-        headers: this.getHeaders(),
-        body: JSON.stringify({ title: newTitle }),
+        title: newTitle,
       }
     );
-    if (!response.ok) {
-      throw new Error("Failed to rename chat");
-    }
-    return response.json();
+    return res.data;
   }
 
   async deleteChat(sessionId: string): Promise<void> {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/collaboration/chat/sessions/${sessionId}`,
-      {
-        method: "DELETE",
-        headers: this.getHeaders(),
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Failed to delete chat");
-    }
+    await this.axios.delete(`/api/v1/collaboration/chat/sessions/${sessionId}`);
   }
 }
 

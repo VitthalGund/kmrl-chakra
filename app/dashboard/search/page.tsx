@@ -47,7 +47,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useGoogleTranslate } from "@/hooks/use-google-translate"; // Import the translation hook
+import { useGoogleTranslate } from "@/hooks/use-google-translate";
 import {
   Select,
   SelectContent,
@@ -55,6 +55,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Conversation {
   id: string;
@@ -62,8 +68,7 @@ interface Conversation {
 }
 
 export default function KnowledgeDiscoveryPage() {
-  useGoogleTranslate(); // Initialize the translation hook
-
+  useGoogleTranslate();
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<
@@ -99,9 +104,8 @@ export default function KnowledgeDiscoveryPage() {
     if (user) loadConversations();
   }, [user]);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = () =>
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
   useEffect(scrollToBottom, [activeMessages]);
 
   const handleNewChat = () => {
@@ -148,11 +152,9 @@ export default function KnowledgeDiscoveryPage() {
       );
       setConversations(remainingConversations);
       if (activeConversationId === sessionId) {
-        if (remainingConversations.length > 0) {
-          handleSelectConversation(remainingConversations[0].id);
-        } else {
-          handleNewChat();
-        }
+        remainingConversations.length > 0
+          ? handleSelectConversation(remainingConversations[0].id)
+          : handleNewChat();
       }
       toast.success("Chat deleted.");
     } catch {
@@ -222,279 +224,282 @@ export default function KnowledgeDiscoveryPage() {
   };
 
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      className="h-full max-h-[calc(100vh-4rem)] w-full"
-    >
-      <ResizablePanel
-        collapsible
-        collapsedSize={4}
-        onCollapse={() => setIsHistoryCollapsed(true)}
-        onExpand={() => setIsHistoryCollapsed(false)}
-        defaultSize={20}
-        minSize={15}
-        maxSize={25}
+    <div className="flex h-full w-full">
+      <ResizablePanelGroup
+        direction="horizontal"
+        dir="auto"
+        className="h-screen"
       >
-        <div
-          className={cn(
-            "flex h-full flex-col",
-            isHistoryCollapsed ? "p-2 items-center" : "p-4"
-          )}
-        >
-          <Button
-            onClick={handleNewChat}
-            className={cn(
-              "mb-4 w-full",
-              isHistoryCollapsed ? "w-auto p-2" : ""
-            )}
-          >
-            <Plus className={cn("h-4 w-4", isHistoryCollapsed ? "" : "mr-2")} />
-            {!isHistoryCollapsed && "New Chat"}
-          </Button>
-          <ScrollArea className="flex-grow">
-            <div className="space-y-1 pr-2">
-              {conversations.map((conv) => (
-                <div
-                  key={conv.id}
-                  className={cn(
-                    "group flex items-center justify-between p-2 rounded-md cursor-pointer",
-                    activeConversationId === conv.id
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-muted"
-                  )}
-                  onClick={() => handleSelectConversation(conv.id)}
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    <MessageSquare className="h-4 w-4 flex-shrink-0" />
-                    {!isHistoryCollapsed && (
-                      <span className="truncate text-sm">{conv.title}</span>
-                    )}
-                  </div>
-                  {!isHistoryCollapsed &&
-                    (editingTitleId === conv.id ? (
+        {!isHistoryCollapsed && (
+          <>
+            <ResizablePanel defaultSize={20} minSize={15} maxSize={25}>
+              <div className="flex h-full flex-col p-4">
+                <Button onClick={handleNewChat} className="mb-4 w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Chat
+                </Button>
+                <ScrollArea className="flex-grow">
+                  <div className="space-y-1 pr-2">
+                    {conversations.map((conv) => (
                       <div
-                        className="flex items-center gap-1"
-                        onClick={(e) => e.stopPropagation()}
+                        key={conv.id}
+                        className={cn(
+                          "group flex items-center justify-between p-2 rounded-md cursor-pointer",
+                          activeConversationId === conv.id
+                            ? "bg-primary text-primary-foreground"
+                            : "hover:bg-muted"
+                        )}
+                        onClick={() => handleSelectConversation(conv.id)}
                       >
-                        <Input
-                          defaultValue={conv.title}
-                          onChange={(e) => setNewTitle(e.target.value)}
-                          onKeyDown={(e) =>
-                            e.key === "Enter" && handleRename(conv.id)
-                          }
-                          className="h-7 text-sm"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={() => handleRename(conv.id)}
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={() => setEditingTitleId(null)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="hidden group-hover:flex">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingTitleId(conv.id);
-                            setNewTitle(conv.title);
-                          }}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 text-destructive hover:text-destructive"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will permanently delete this chat.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDelete(conv.id)}
+                        <div className="flex items-center gap-2 truncate">
+                          <MessageSquare className="h-4 w-4 flex-shrink-0" />
+                          {editingTitleId === conv.id ? (
+                            <Input
+                              defaultValue={conv.title}
+                              onChange={(e) => setNewTitle(e.target.value)}
+                              onKeyDown={(e) =>
+                                e.key === "Enter" && handleRename(conv.id)
+                              }
+                              autoFocus
+                              onBlur={() => setEditingTitleId(null)}
+                              className="h-7 text-sm"
+                            />
+                          ) : (
+                            <span className="truncate text-sm">
+                              {conv.title}
+                            </span>
+                          )}
+                        </div>
+                        <div className="hidden group-hover:flex">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingTitleId(conv.id);
+                              setNewTitle(conv.title);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-destructive hover:text-destructive"
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete this chat.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(conv.id)}
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </div>
                     ))}
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
-      </ResizablePanel>
-      <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={80}>
-        <main className="flex flex-1 flex-col h-full">
-          <header className="flex-shrink-0 border-b p-4 flex justify-end items-center gap-2">
-            <div id="google_translate_element"></div>
-            <Select
-              onValueChange={(lang) => {
-                const googleSelect: HTMLSelectElement | null =
-                  document.querySelector(".goog-te-combo");
-                if (googleSelect) {
-                  googleSelect.value = lang;
-                  googleSelect.dispatchEvent(new Event("change"));
-                }
-              }}
-            >
-              <SelectTrigger className="w-[140px]">
-                <Languages className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Translate" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="ml">Malayalam</SelectItem>
-                <SelectItem value="hi">Hindi</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              disabled={!activeConversationId || activeMessages.length === 0}
-            >
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </Button>
-          </header>
-          <ScrollArea className="flex-1 p-6">
-            <div className="space-y-6 max-w-4xl mx-auto">
-              {activeMessages.map((message, index) => (
+                  </div>
+                </ScrollArea>
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+          </>
+        )}
+        <ResizablePanel defaultSize={80} className="h-screen">
+          <div className="flex flex-col h-screen">
+            <header className="flex-shrink-0 border-b p-2 flex justify-between items-center">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsHistoryCollapsed((prev) => !prev)}
+                    >
+                      {isHistoryCollapsed ? (
+                        <PanelLeftOpen className="h-5 w-5" />
+                      ) : (
+                        <PanelLeftClose className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {isHistoryCollapsed ? "Open History" : "Close History"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <div className="flex items-center gap-2">
                 <div
-                  key={index}
-                  className={`flex items-start gap-4 ${
-                    message.role === "user" ? "justify-end" : ""
-                  }`}
+                  id="google_translate_element"
+                  className="notranslate"
+                ></div>
+                <Select
+                  onValueChange={(lang) => {
+                    const select: HTMLSelectElement | null =
+                      document.querySelector(".goog-te-combo");
+                    if (select) {
+                      select.value = lang;
+                      select.dispatchEvent(new Event("change"));
+                    }
+                  }}
                 >
-                  {message.role === "assistant" && (
+                  <SelectTrigger className="w-[140px]">
+                    <Languages className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Translate" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="ml">Malayalam</SelectItem>
+                    <SelectItem value="hi">Hindi</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleShare}
+                  disabled={
+                    !activeConversationId || activeMessages.length === 0
+                  }
+                >
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share
+                </Button>
+              </div>
+            </header>
+            <ScrollArea className="flex-1 p-6 max-h-screen">
+              <div className="space-y-6 max-w-4xl mx-auto">
+                {activeMessages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-start gap-4 ${
+                      message.role === "user" ? "justify-end" : ""
+                    }`}
+                  >
+                    {message.role === "assistant" && (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
+                        <Bot className="h-6 w-6" />
+                      </div>
+                    )}
+                    <div
+                      className={cn(
+                        "p-4 rounded-lg max-w-2xl",
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted"
+                      )}
+                    >
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        // className="prose dark:prose-invert max-w-none break-words"
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                      {message.sources && message.sources.length > 0 && (
+                        <div className="mt-4 border-t pt-4">
+                          <h4 className="font-semibold text-sm mb-2">
+                            Sources:
+                          </h4>
+                          <div className="space-y-2">
+                            {message.sources.map(
+                              (source: Source, i: number) => (
+                                <div
+                                  key={i}
+                                  className="text-xs p-2 bg-background/50 rounded-md flex items-center justify-between gap-2"
+                                >
+                                  <div className="flex-grow overflow-hidden">
+                                    <p className="font-bold truncate">
+                                      {source.file_name}
+                                    </p>
+                                    <p className="italic text-muted-foreground truncate">
+                                      {source.context}
+                                    </p>
+                                  </div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => openPreview(source)}
+                                  >
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    Preview
+                                  </Button>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {message.role === "user" && (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground flex-shrink-0">
+                        <User className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
                       <Bot className="h-6 w-6" />
                     </div>
-                  )}
-                  <div
-                    className={cn(
-                      "p-4 rounded-lg",
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    )}
+                    <Card className="max-w-2xl">
+                      <CardContent className="p-4">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
+            <div className="border-t bg-background p-4">
+              <div className="relative max-w-4xl mx-auto">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                  placeholder="Ask anything..."
+                  className="pr-12"
+                  disabled={isLoading}
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={isLoading || !input.trim()}
+                    size="icon"
                   >
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      // className="prose dark:prose-invert max-w-none break-words"
-                    >
-                      {message.content}
-                    </ReactMarkdown>
-                    {message.sources && message.sources.length > 0 && (
-                      <div className="mt-4 border-t pt-4">
-                        <h4 className="font-semibold text-sm mb-2">Sources:</h4>
-                        <div className="space-y-2">
-                          {message.sources.map((source: Source, i: number) => (
-                            <div
-                              key={i}
-                              className="text-xs p-2 bg-background/50 rounded-md flex items-center justify-between gap-2"
-                            >
-                              <div className="flex-grow overflow-hidden">
-                                <p className="font-bold truncate">
-                                  {source.file_name}
-                                </p>
-                                <p className="italic text-muted-foreground truncate">
-                                  {source.context}
-                                </p>
-                              </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openPreview(source)}
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                Preview
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {message.role === "user" && (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground flex-shrink-0">
-                      <User className="h-6 w-6" />
-                    </div>
-                  )}
+                    <Send className="h-5 w-5" />
+                  </Button>
                 </div>
-              ))}
-              {isLoading && (
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
-                    <Bot className="h-6 w-6" />
-                  </div>
-                  <Card className="max-w-2xl">
-                    <CardContent className="p-4">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollArea>
-          <div className="border-t bg-background p-4">
-            <div className="relative max-w-4xl mx-auto">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder="Ask anything..."
-                className="pr-12"
-                disabled={isLoading}
-              />
-              <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={isLoading || !input.trim()}
-                  size="icon"
-                >
-                  <Send className="h-5 w-5" />
-                </Button>
               </div>
             </div>
           </div>
-        </main>
-      </ResizablePanel>
+        </ResizablePanel>
+      </ResizablePanelGroup>
       <DocPreview
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
         source={previewSource}
       />
-    </ResizablePanelGroup>
+    </div>
   );
 }
