@@ -66,6 +66,7 @@ export default function DashboardLayout({
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
   ];
   console.log({ user });
+  console.log({ condition: user?.role?.toLocaleLowerCase() === "admin" });
   if (user?.role.toLocaleLowerCase() === "admin") {
     navItems.push({
       href: "/dashboard/admin",

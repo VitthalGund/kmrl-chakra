@@ -11,7 +11,6 @@ import {
   Loader2,
   Calendar,
   Building,
-  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { apiClient, Document } from "@/lib/api"; // Ensure Document type is exported from api.ts
+import { apiClient, Document } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { format } from "date-fns";
 
@@ -46,25 +45,22 @@ export default function DocumentsPage() {
     department: "all",
     category: "all",
   });
-  const [pagination, setPagination] = useState({
-    skip: 0,
-    limit: 8,
-  });
+  const [pagination, setPagination] = useState({ skip: 0, limit: 8 });
 
   useEffect(() => {
     const fetchDocuments = async () => {
       if (!isAuthenticated) return;
       setIsLoading(true);
       try {
-        const { data } = await apiClient.getDocuments({
+        const response = await apiClient.getDocuments({
           skip: pagination.skip,
           limit: pagination.limit,
           department:
             filters.department !== "all" ? filters.department : undefined,
           category: filters.category !== "all" ? filters.category : undefined,
         });
-        setDocuments(data.documents);
-        setTotalDocuments(data.total);
+        setDocuments(response.documents);
+        setTotalDocuments(response.total);
       } catch (error) {
         toast.error("Failed to fetch documents.");
       } finally {
@@ -75,8 +71,10 @@ export default function DocumentsPage() {
     fetchDocuments();
   }, [isAuthenticated, filters, pagination]);
 
-  const totalPages = Math.ceil(totalDocuments / pagination.limit);
-  const currentPage = pagination.skip / pagination.limit + 1;
+  const totalPages =
+    totalDocuments > 0 ? Math.ceil(totalDocuments / pagination.limit) : 1;
+  const currentPage =
+    totalDocuments > 0 ? pagination.skip / pagination.limit + 1 : 1;
 
   const DocumentCard = ({ doc }: { doc: Document }) => (
     <Card className="flex flex-col">
@@ -106,98 +104,98 @@ export default function DocumentsPage() {
   );
 
   return (
-    <div className="p-6 space-y-6 min-h-screen">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Document Management
-        </h1>
-        <p className="text-muted-foreground">
-          Browse, search, and manage all documents in the KMRL knowledge base.
-        </p>
+    <div className="p-6 space-y-6 flex flex-col h-full">
+      <div className="flex-shrink-0 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Document Library
+          </h1>
+          <p className="text-muted-foreground">
+            Browse and manage all documents in the KMRL knowledge base.
+          </p>
+        </div>
+        <Card>
+          <CardContent className="p-4 flex flex-col md:flex-row gap-4 items-center">
+            <div className="relative flex-grow w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input placeholder="Search documents..." className="pl-10" />
+            </div>
+            <div className="flex gap-2 w-full md:w-auto">
+              <Select
+                value={filters.department}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, department: value }))
+                }
+              >
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="Department" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Departments</SelectItem>
+                  <SelectItem value="Operations">Operations</SelectItem>
+                  <SelectItem value="Maintenance">Maintenance</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={filters.category}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, category: value }))
+                }
+              >
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="Manual">Manual</SelectItem>
+                  <SelectItem value="Report">Report</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2 rounded-md bg-muted p-1">
+              <Button
+                variant={viewMode === "grid" ? "secondary" : "ghost"}
+                size="icon"
+                onClick={() => setViewMode("grid")}
+              >
+                <LayoutGrid className="h-5 w-5" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                size="icon"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-5 w-5" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
-        <CardContent className="p-4 flex flex-col md:flex-row gap-4 items-center">
-          <div className="relative flex-grow w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input placeholder="Search documents..." className="pl-10" />
+      <div className="flex-grow">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
-          <div className="flex gap-2 w-full md:w-auto">
-            <Select
-              value={filters.department}
-              onValueChange={(value) =>
-                setFilters((prev) => ({ ...prev, department: value }))
-              }
-            >
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Department" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                <SelectItem value="Operations">Operations</SelectItem>
-                <SelectItem value="Maintenance">Maintenance</SelectItem>
-                <SelectItem value="Engineering">Engineering</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={filters.category}
-              onValueChange={(value) =>
-                setFilters((prev) => ({ ...prev, category: value }))
-              }
-            >
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Manual">Manual</SelectItem>
-                <SelectItem value="Report">Report</SelectItem>
-                <SelectItem value="Policy">Policy</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center gap-2 rounded-md bg-muted p-1">
-            <Button
-              variant={viewMode === "grid" ? "secondary" : "ghost"}
-              size="icon"
-              onClick={() => setViewMode("grid")}
-            >
-              <LayoutGrid className="h-5 w-5" />
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "secondary" : "ghost"}
-              size="icon"
-              onClick={() => setViewMode("list")}
-            >
-              <List className="h-5 w-5" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {isLoading ? (
-        <div className="flex justify-center items-center h-96">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      ) : (
-        <>
+        ) : documents.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {documents.map((doc) => (
               <DocumentCard key={doc.id} doc={doc} />
             ))}
           </div>
-          {documents.length === 0 && (
-            <div className="text-center py-20 text-muted-foreground">
-              <p className="text-lg">No documents found.</p>
-              <p>Try adjusting your filters or uploading a new document.</p>
-            </div>
-          )}
-        </>
-      )}
+        ) : (
+          <div className="text-center py-20 text-muted-foreground h-full flex flex-col justify-center items-center">
+            <p className="text-lg font-semibold">No documents found.</p>
+            <p>Try adjusting your filters or uploading a new document.</p>
+          </div>
+        )}
+      </div>
 
-      <div className="flex justify-between items-center relative bottom-2">
+      <div className="flex-shrink-0 pt-6 flex justify-between items-center">
         <span className="text-sm text-muted-foreground">
-          Showing {documents.length} of {totalDocuments} documents
+          Showing {pagination.skip + 1} -{" "}
+          {Math.min(pagination.skip + pagination.limit, totalDocuments)} of{" "}
+          {totalDocuments} documents
         </span>
         <div className="flex items-center space-x-2">
           <Button

@@ -30,12 +30,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Train } from "lucide-react";
 
-// Define a type for our analytics data for better type-safety
 interface AnalyticsData {
   total_documents: number;
   total_queries: number;
   active_users: number;
-  total_users: number; // FIXED: Added this property
+  total_users: number;
   department_distribution: { [key: string]: number };
   monthly_trends: Array<{
     month: string;
@@ -102,7 +101,7 @@ export default function AdminAnalyticsPage() {
     analyticsData.department_distribution
   ).map(([name, value]) => ({
     name,
-    value: Math.round(value * 100), // Convert to percentage
+    value: Math.round(value * 100),
   }));
 
   return (
@@ -120,7 +119,7 @@ export default function AdminAnalyticsPage() {
               Analytics
             </Link>
             <Link
-              href="/dashboard/documents"
+              href="/dashboard/admin/documents"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Document Management

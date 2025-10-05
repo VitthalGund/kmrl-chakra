@@ -1,11 +1,23 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   FileText,
   Upload,
@@ -21,11 +33,11 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-} from "lucide-react"
-import Link from "next/link"
+} from "lucide-react";
+import Link from "next/link";
 
 export default function AdminDocumentsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
 
   const documents = [
     {
@@ -76,33 +88,33 @@ export default function AdminDocumentsPage() {
       views: 1456,
       lastModified: "2025-01-12 11:20",
     },
-  ]
+  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Active":
-        return "bg-green-600 text-white"
+        return "bg-green-600 text-white";
       case "Draft":
-        return "bg-yellow-600 text-white"
+        return "bg-yellow-600 text-white";
       case "Archived":
-        return "bg-gray-600 text-white"
+        return "bg-gray-600 text-white";
       default:
-        return "bg-gray-600 text-white"
+        return "bg-gray-600 text-white";
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "Active":
-        return <CheckCircle className="h-3 w-3" />
+        return <CheckCircle className="h-3 w-3" />;
       case "Draft":
-        return <Clock className="h-3 w-3" />
+        return <Clock className="h-3 w-3" />;
       case "Archived":
-        return <AlertTriangle className="h-3 w-3" />
+        return <AlertTriangle className="h-3 w-3" />;
       default:
-        return <AlertTriangle className="h-3 w-3" />
+        return <AlertTriangle className="h-3 w-3" />;
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,7 +125,9 @@ export default function AdminDocumentsPage() {
             <div className="flex items-center space-x-3">
               <Link href="/" className="flex items-center space-x-2">
                 <Train className="h-6 w-6 text-primary" />
-                <span className="font-bold text-lg text-gray-200">KMRL Chakra</span>
+                <span className="font-bold text-lg text-gray-200">
+                  KMRL Chakra
+                </span>
               </Link>
               <Badge variant="secondary" className="bg-red-600 text-white">
                 <Shield className="h-3 w-3 mr-1" />
@@ -121,13 +135,22 @@ export default function AdminDocumentsPage() {
               </Badge>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/admin/analytics" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/admin/analytics"
+                className="text-gray-300 hover:text-primary transition-colors"
+              >
                 Analytics
               </Link>
-              <Link href="/admin/documents" className="text-primary font-medium">
+              <Link
+                href="/admin/documents"
+                className="text-primary font-medium"
+              >
                 Document Management
               </Link>
-              <Link href="/admin/users" className="text-gray-300 hover:text-primary transition-colors">
+              <Link
+                href="/admin/users"
+                className="text-gray-300 hover:text-primary transition-colors"
+              >
                 User Management
               </Link>
             </nav>
@@ -142,8 +165,12 @@ export default function AdminDocumentsPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-gray-200">Document Management</h1>
-          <p className="text-gray-400">Upload, manage, and organize all KMRL documents</p>
+          <h1 className="text-3xl font-bold mb-2 text-gray-200">
+            Document Management
+          </h1>
+          <p className="text-gray-400">
+            Upload, manage, and organize all KMRL documents
+          </p>
         </div>
 
         {/* Quick Stats */}
@@ -152,7 +179,9 @@ export default function AdminDocumentsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-400">Total Documents</p>
+                  <p className="text-sm font-medium text-gray-400">
+                    Total Documents
+                  </p>
                   <p className="text-2xl font-bold text-gray-200">2,847</p>
                 </div>
                 <FileText className="h-8 w-8 text-primary" />
@@ -163,7 +192,9 @@ export default function AdminDocumentsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-400">Pending Review</p>
+                  <p className="text-sm font-medium text-gray-400">
+                    Pending Review
+                  </p>
                   <p className="text-2xl font-bold text-gray-200">23</p>
                 </div>
                 <Clock className="h-8 w-8 text-yellow-500" />
@@ -174,7 +205,9 @@ export default function AdminDocumentsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-400">Storage Used</p>
+                  <p className="text-sm font-medium text-gray-400">
+                    Storage Used
+                  </p>
                   <p className="text-2xl font-bold text-gray-200">1.2 TB</p>
                 </div>
                 <Upload className="h-8 w-8 text-blue-500" />
@@ -185,7 +218,9 @@ export default function AdminDocumentsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-400">Active Users</p>
+                  <p className="text-sm font-medium text-gray-400">
+                    Active Users
+                  </p>
                   <p className="text-2xl font-bold text-gray-200">89</p>
                 </div>
                 <CheckCircle className="h-8 w-8 text-green-500" />
@@ -242,7 +277,9 @@ export default function AdminDocumentsPage() {
                   <Filter className="h-4 w-4 mr-2" />
                   Advanced Filters
                 </Button>
-                <span className="text-sm text-gray-400">{documents.length} documents found</span>
+                <span className="text-sm text-gray-400">
+                  {documents.length} documents found
+                </span>
               </div>
               <Button className="bg-primary hover:bg-primary/90">
                 <Plus className="h-4 w-4 mr-2" />
@@ -256,7 +293,9 @@ export default function AdminDocumentsPage() {
         <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle className="text-gray-200">All Documents</CardTitle>
-            <CardDescription className="text-gray-400">Manage and organize your document library</CardDescription>
+            <CardDescription className="text-gray-400">
+              Manage and organize your document library
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -268,7 +307,9 @@ export default function AdminDocumentsPage() {
                   <div className="flex items-center space-x-4 flex-1">
                     <FileText className="h-8 w-8 text-primary" />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg text-gray-200">{doc.title}</h3>
+                      <h3 className="font-semibold text-lg text-gray-200">
+                        {doc.title}
+                      </h3>
                       <div className="flex items-center space-x-4 mt-1 text-sm text-gray-400">
                         <span>{doc.department}</span>
                         <span>{doc.size}</span>
@@ -280,9 +321,15 @@ export default function AdminDocumentsPage() {
                   <div className="flex items-center space-x-4">
                     <div className="text-right text-sm">
                       <p className="text-gray-400">{doc.views} views</p>
-                      <p className="text-xs text-gray-500">{doc.downloads} downloads</p>
+                      <p className="text-xs text-gray-500">
+                        {doc.downloads} downloads
+                      </p>
                     </div>
-                    <Badge className={`text-xs flex items-center gap-1 ${getStatusColor(doc.status)}`}>
+                    <Badge
+                      className={`text-xs flex items-center gap-1 ${getStatusColor(
+                        doc.status
+                      )}`}
+                    >
                       {getStatusIcon(doc.status)}
                       {doc.status}
                     </Badge>
@@ -324,5 +371,5 @@ export default function AdminDocumentsPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
