@@ -224,6 +224,7 @@ export default function KnowledgeDiscoveryPage() {
     setPreviewSource(source);
     setIsPreviewOpen(true);
   };
+  console.log({ conversations });
 
   return (
     <div className="flex h-full w-full">

@@ -1,3 +1,5 @@
+// hooks/use-google-translate.ts
+
 import { useEffect } from "react";
 
 declare global {
@@ -30,16 +32,32 @@ export const useGoogleTranslate = () => {
 
     const style = document.createElement("style");
     style.innerHTML = `
-      #google_translate_element {
-        display: none;
+      #google_translate_element,
+      .goog-te-banner-frame,
+      .goog-te-gadget-simple,
+      .goog-te-gadget-icon {
+        display: none !important;
       }
       body {
         top: 0 !important;
       }
-      .goog-te-banner-frame {
+      .goog-tooltip {
         display: none !important;
+      }
+      .goog-tooltip:hover {
+        display: none !important;
+      }
+      .goog-text-highlight {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
       }
     `;
     document.head.appendChild(style);
+
+    return () => {
+      document.body.removeChild(addScript);
+      document.head.removeChild(style);
+    };
   }, []);
 };
