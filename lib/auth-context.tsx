@@ -7,6 +7,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
+
 import { apiClient, LoginRequest, type User } from "./api";
 
 interface AuthContextType {
@@ -22,9 +23,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = (
-    typeof window !== "undefined" ? require("next/navigation") : null
-  ).useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -49,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("refresh_token", authResponse.refresh_token);
       const userData = await apiClient.getCurrentUser();
       setUser(userData);
-      router.push("/dashboard/documents");
     } catch (error) {
       console.error("Login failed:", error);
       setUser(null);
