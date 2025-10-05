@@ -143,7 +143,7 @@ export default function AdminUsersPage() {
           </p>
         </div>
 
-        <Card>
+        <Card className="p-4">
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
               <Search className="h-5 w-5" />
@@ -210,7 +210,7 @@ export default function AdminUsersPage() {
       </div>
 
       <div className="flex-grow">
-        <Card>
+        <Card className="p-6">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>

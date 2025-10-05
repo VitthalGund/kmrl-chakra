@@ -1,22 +1,42 @@
-"use client"
+// app/whatsapp/page.tsx
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { MessageSquare, Phone, Send, Bot, User, ArrowLeft, CheckCircle2, Clock, Zap, Languages } from "lucide-react"
-import NextLink from "next/link"
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  MessageSquare,
+  Phone,
+  Send,
+  Bot,
+  User,
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  Zap,
+  Languages,
+} from "lucide-react";
+import NextLink from "next/link";
 
 export default function WhatsAppPage() {
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     {
       id: 1,
       type: "bot",
       content: "Hello! I'm KMRL Chakra Bot. How can I help you today?",
-      contentMalayalam: "ഹലോ! ഞാൻ KMRL ചക്ര ബോട്ട് ആണ്. ഇന്ന് ഞാൻ നിങ്ങളെ എങ്ങനെ സഹായിക്കാം?",
+      contentMalayalam:
+        "ഹലോ! ഞാൻ KMRL ചക്ര ബോട്ട് ആണ്. ഇന്ന് ഞാൻ നിങ്ങളെ എങ്ങനെ സഹായിക്കാം?",
       timestamp: "10:30 AM",
     },
     {
@@ -28,11 +48,13 @@ export default function WhatsAppPage() {
     {
       id: 3,
       type: "bot",
-      content: "I found 3 recent safety protocol documents. Here are the summaries:",
-      contentMalayalam: "ഞാൻ 3 സമീപകാല സുരക്ഷാ പ്രോട്ടോക്കോൾ ഡോക്യുമെന്റുകൾ കണ്ടെത്തി. ഇവിടെ സംഗ്രഹങ്ങൾ ഉണ്ട്:",
+      content:
+        "I found 3 recent safety protocol documents. Here are the summaries:",
+      contentMalayalam:
+        "ഞാൻ 3 സമീപകാല സുരക്ഷാ പ്രോട്ടോക്കോൾ ഡോക്യുമെന്റുകൾ കണ്ടെത്തി. ഇവിടെ സംഗ്രഹങ്ങൾ ഉണ്ട്:",
       timestamp: "10:31 AM",
     },
-  ])
+  ]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -40,10 +62,13 @@ export default function WhatsAppPage() {
         id: messages.length + 1,
         type: "user" as const,
         content: message,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      }
-      setMessages([...messages, newMessage])
-      setMessage("")
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+      setMessages([...messages, newMessage]);
+      setMessage("");
 
       // Simulate bot response
       setTimeout(() => {
@@ -51,20 +76,24 @@ export default function WhatsAppPage() {
           id: messages.length + 2,
           type: "bot" as const,
           content: "I'm processing your request. Please wait...",
-          contentMalayalam: "ഞാൻ നിങ്ങളുടെ അഭ്യർത്ഥന പ്രോസസ്സ് ചെയ്യുന്നു. ദയവായി കാത്തിരിക്കുക...",
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        }
-        setMessages((prev) => [...prev, botResponse])
-      }, 1000)
+          contentMalayalam:
+            "ഞാൻ നിങ്ങളുടെ അഭ്യർത്ഥന പ്രോസസ്സ് ചെയ്യുന്നു. ദയവായി കാത്തിരിക്കുക...",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+        setMessages((prev) => [...prev, botResponse]);
+      }, 1000);
     }
-  }
+  };
 
   const quickActions = [
     { text: "Latest Documents", malayalam: "ഏറ്റവും പുതിയ ഡോക്യുമെന്റുകൾ" },
     { text: "Safety Protocols", malayalam: "സുരക്ഷാ പ്രോട്ടോക്കോളുകൾ" },
     { text: "Maintenance Schedule", malayalam: "അറ്റകുറ്റപ്പണി ഷെഡ്യൂൾ" },
     { text: "Training Materials", malayalam: "പരിശീലന സാമഗ്രികൾ" },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
@@ -72,18 +101,22 @@ export default function WhatsAppPage() {
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Button variant="ghost" size="sm" asChild>
                 <NextLink href="/dashboard">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back
+                  <ArrowLeft className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Back</span>
                 </NextLink>
               </Button>
               <div className="flex items-center space-x-3">
                 <MessageSquare className="h-6 w-6 text-primary kerala-wave" />
                 <div>
-                  <h1 className="text-xl font-bold">WhatsApp Integration</h1>
-                  <p className="text-sm text-muted-foreground">വാട്സ്ആപ്പ് സംയോജനം</p>
+                  <h1 className="text-lg sm:text-xl font-bold">
+                    WhatsApp Integration
+                  </h1>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    വാട്സ്ആപ്പ് സംയോജനം
+                  </p>
                 </div>
               </div>
             </div>
@@ -92,7 +125,7 @@ export default function WhatsAppPage() {
                 <CheckCircle2 className="mr-1 h-3 w-3" />
                 Connected
               </Badge>
-              <Badge variant="outline">
+              <Badge variant="outline" className="hidden sm:flex">
                 <Phone className="mr-1 h-3 w-3" />
                 +91 9876543210
               </Badge>
@@ -102,17 +135,21 @@ export default function WhatsAppPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Chat Interface */}
-          <div className="lg:col-span-3">
-            <Card className="h-[600px] flex flex-col">
+          <div className="lg:col-span-2">
+            <Card className="h-[70vh] sm:h-[600px] flex flex-col">
               <CardHeader className="gradient-kerala text-white">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Bot className="h-8 w-8 ai-thinking" />
                     <div>
-                      <CardTitle className="text-white">KMRL Chakra Bot</CardTitle>
-                      <CardDescription className="text-green-100">AI Assistant for Document Management</CardDescription>
+                      <CardTitle className="text-white">
+                        KMRL Chakra Bot
+                      </CardTitle>
+                      <CardDescription className="text-green-100">
+                        AI Assistant for Document Management
+                      </CardDescription>
                     </div>
                   </div>
                   <Badge variant="secondary" className="bg-white/20 text-white">
@@ -125,23 +162,40 @@ export default function WhatsAppPage() {
               {/* Messages */}
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((msg) => (
-                  <div key={msg.id} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    key={msg.id}
+                    className={`flex ${
+                      msg.type === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
                     <div
-                      className={`max-w-[70%] rounded-lg p-3 ${
-                        msg.type === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                      className={`max-w-[80%] sm:max-w-[70%] rounded-lg p-3 ${
+                        msg.type === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
                       <div className="flex items-start space-x-2">
-                        {msg.type === "bot" && <Bot className="h-4 w-4 mt-1 text-primary" />}
-                        {msg.type === "user" && <User className="h-4 w-4 mt-1" />}
+                        {msg.type === "bot" && (
+                          <Bot className="h-4 w-4 mt-1 text-primary" />
+                        )}
+                        {msg.type === "user" && (
+                          <User className="h-4 w-4 mt-1" />
+                        )}
                         <div className="flex-1">
                           <p className="text-sm">{msg.content}</p>
                           {msg.contentMalayalam && (
-                            <p className="text-xs mt-1 opacity-80 italic">{msg.contentMalayalam}</p>
+                            <p className="text-xs mt-1 opacity-80 italic">
+                              {msg.contentMalayalam}
+                            </p>
                           )}
                           <div className="flex items-center justify-between mt-2">
-                            <span className="text-xs opacity-60">{msg.timestamp}</span>
-                            {msg.type === "user" && <CheckCircle2 className="h-3 w-3 opacity-60" />}
+                            <span className="text-xs opacity-60">
+                              {msg.timestamp}
+                            </span>
+                            {msg.type === "user" && (
+                              <CheckCircle2 className="h-3 w-3 opacity-60" />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -160,7 +214,10 @@ export default function WhatsAppPage() {
                     onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                     className="flex-1"
                   />
-                  <Button onClick={handleSendMessage} className="gradient-kerala text-white">
+                  <Button
+                    onClick={handleSendMessage}
+                    className="gradient-kerala text-white"
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -251,16 +308,26 @@ export default function WhatsAppPage() {
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div>
-                  <code className="bg-muted px-2 py-1 rounded text-xs">/search [query]</code>
+                  <code className="bg-muted px-2 py-1 rounded text-xs">
+                    /search [query]
+                  </code>
                   <p className="text-muted-foreground mt-1">Search documents</p>
                 </div>
                 <div>
-                  <code className="bg-muted px-2 py-1 rounded text-xs">/summary [doc]</code>
-                  <p className="text-muted-foreground mt-1">Get document summary</p>
+                  <code className="bg-muted px-2 py-1 rounded text-xs">
+                    /summary [doc]
+                  </code>
+                  <p className="text-muted-foreground mt-1">
+                    Get document summary
+                  </p>
                 </div>
                 <div>
-                  <code className="bg-muted px-2 py-1 rounded text-xs">/help</code>
-                  <p className="text-muted-foreground mt-1">Show all commands</p>
+                  <code className="bg-muted px-2 py-1 rounded text-xs">
+                    /help
+                  </code>
+                  <p className="text-muted-foreground mt-1">
+                    Show all commands
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -268,5 +335,5 @@ export default function WhatsAppPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

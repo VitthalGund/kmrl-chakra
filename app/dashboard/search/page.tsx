@@ -1,3 +1,5 @@
+// app/dashboard/search/page.tsx
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -225,20 +227,16 @@ export default function KnowledgeDiscoveryPage() {
 
   return (
     <div className="flex h-full w-full">
-      <ResizablePanelGroup
-        direction="horizontal"
-        dir="auto"
-        className="h-screen"
-      >
+      <ResizablePanelGroup direction="horizontal" dir="auto" className="h-full">
         {!isHistoryCollapsed && (
           <>
             <ResizablePanel defaultSize={20} minSize={15} maxSize={25}>
-              <div className="flex h-fit flex-col p-4">
+              <div className="flex h-full flex-col p-4">
                 <Button onClick={handleNewChat} className="mb-4 w-full">
                   <Plus className="h-4 w-4 mr-2" />
                   New Chat
                 </Button>
-                <ScrollArea className="flex-grow">
+                <ScrollArea className="flex-grow max-h-[calc(100vh-200px)]">
                   <div className="space-y-1">
                     {conversations.map((conv) => (
                       <div
@@ -323,8 +321,8 @@ export default function KnowledgeDiscoveryPage() {
             <ResizableHandle withHandle />
           </>
         )}
-        <ResizablePanel defaultSize={80} className="h-screen">
-          <div className="flex flex-col h-screen">
+        <ResizablePanel defaultSize={80}>
+          <div className="flex flex-col h-full">
             <header className="flex-shrink-0 border-b p-2 flex justify-between items-center">
               <TooltipProvider>
                 <Tooltip>
@@ -386,92 +384,94 @@ export default function KnowledgeDiscoveryPage() {
                 </Button>
               </div>
             </header>
-            <ScrollArea className="flex-1 p-6 max-h-[calc(100vh-190px)]">
-              <div className="space-y-6 max-w-4xl mx-auto">
-                {activeMessages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-start gap-4 ${
-                      message.role === "user" ? "justify-end" : ""
-                    }`}
-                  >
-                    {message.role === "assistant" && (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
-                        <Bot className="h-6 w-6" />
-                      </div>
-                    )}
+            <div className="flex-grow overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="p-6 space-y-6 max-w-4xl max-h-[calc(100vh-200px)] mx-auto">
+                  {activeMessages.map((message, index) => (
                     <div
-                      className={cn(
-                        "p-4 rounded-lg max-w-2xl",
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      )}
+                      key={index}
+                      className={`flex items-start gap-4 ${
+                        message.role === "user" ? "justify-end" : ""
+                      }`}
                     >
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        // className="prose dark:prose-invert max-w-none break-words"
+                      {message.role === "assistant" && (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
+                          <Bot className="h-6 w-6" />
+                        </div>
+                      )}
+                      <div
+                        className={cn(
+                          "p-4 rounded-lg max-w-2xl",
+                          message.role === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
+                        )}
                       >
-                        {message.content}
-                      </ReactMarkdown>
-                      {message.sources && message.sources.length > 0 && (
-                        <div className="mt-4 border-t pt-4">
-                          <h4 className="font-semibold text-sm mb-2">
-                            Sources:
-                          </h4>
-                          <div className="space-y-2">
-                            {message.sources.map(
-                              (source: Source, i: number) => (
-                                <div
-                                  key={i}
-                                  className="text-xs p-2 bg-background/50 rounded-md flex items-center justify-between gap-2"
-                                >
-                                  <div className="flex-grow overflow-hidden">
-                                    <p className="font-bold truncate">
-                                      {source.file_name}
-                                    </p>
-                                    <p className="italic text-muted-foreground truncate">
-                                      {source.context}
-                                    </p>
-                                  </div>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => openPreview(source)}
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          // className="prose dark:prose-invert max-w-none break-words"
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                        {message.sources && message.sources.length > 0 && (
+                          <div className="mt-4 border-t pt-4">
+                            <h4 className="font-semibold text-sm mb-2">
+                              Sources:
+                            </h4>
+                            <div className="space-y-2">
+                              {message.sources.map(
+                                (source: Source, i: number) => (
+                                  <div
+                                    key={i}
+                                    className="text-xs p-2 bg-background/50 rounded-md flex items-center justify-between gap-2"
                                   >
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    Preview
-                                  </Button>
-                                </div>
-                              )
-                            )}
+                                    <div className="flex-grow overflow-hidden">
+                                      <p className="font-bold truncate">
+                                        {source.file_name}
+                                      </p>
+                                      <p className="italic text-muted-foreground truncate">
+                                        {source.context}
+                                      </p>
+                                    </div>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => openPreview(source)}
+                                    >
+                                      <Eye className="h-4 w-4 mr-2" />
+                                      Preview
+                                    </Button>
+                                  </div>
+                                )
+                              )}
+                            </div>
                           </div>
+                        )}
+                      </div>
+                      {message.role === "user" && (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground flex-shrink-0">
+                          <User className="h-6 w-6" />
                         </div>
                       )}
                     </div>
-                    {message.role === "user" && (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground flex-shrink-0">
-                        <User className="h-6 w-6" />
+                  ))}
+                  {isLoading && (
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
+                        <Bot className="h-6 w-6" />
                       </div>
-                    )}
-                  </div>
-                ))}
-                {isLoading && (
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
-                      <Bot className="h-6 w-6" />
+                      <Card className="max-w-2xl">
+                        <CardContent className="p-4">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        </CardContent>
+                      </Card>
                     </div>
-                    <Card className="max-w-2xl">
-                      <CardContent className="p-4">
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
-            <div className="border-t bg-background p-4 relative bottom-0">
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+              </ScrollArea>
+            </div>
+            <div className="border-t bg-background p-4 flex-shrink-0">
               <div className="relative max-w-4xl mx-auto">
                 <Input
                   value={input}

@@ -1,3 +1,5 @@
+// app/dashboard/documents/page.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -77,7 +79,7 @@ export default function DocumentsPage() {
     totalDocuments > 0 ? pagination.skip / pagination.limit + 1 : 1;
 
   const DocumentCard = ({ doc }: { doc: Document }) => (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full">
       <CardHeader>
         <div className="flex items-start justify-between">
           <FileText className="h-8 w-8 text-primary" />
@@ -104,10 +106,10 @@ export default function DocumentsPage() {
   );
 
   return (
-    <div className="p-6 space-y-6 flex flex-col h-full">
+    <div className="p-4 sm:p-6 space-y-6 flex flex-col h-full">
       <div className="flex-shrink-0 space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
             Document Library
           </h1>
           <p className="text-muted-foreground">
@@ -120,7 +122,7 @@ export default function DocumentsPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input placeholder="Search documents..." className="pl-10" />
             </div>
-            <div className="flex gap-2 w-full md:w-auto">
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
               <Select
                 value={filters.department}
                 onValueChange={(value) =>
@@ -152,7 +154,7 @@ export default function DocumentsPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center gap-2 rounded-md bg-muted p-1">
+            <div className="flex items-center gap-2 rounded-md bg-muted p-1 self-end">
               <Button
                 variant={viewMode === "grid" ? "secondary" : "ghost"}
                 size="icon"
@@ -178,10 +180,43 @@ export default function DocumentsPage() {
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
         ) : documents.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {documents.map((doc) => (
-              <DocumentCard key={doc.id} doc={doc} />
-            ))}
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                : "space-y-4"
+            }
+          >
+            {documents.map((doc) =>
+              viewMode === "grid" ? (
+                <DocumentCard key={doc.id} doc={doc} />
+              ) : (
+                <Card key={doc.id} className="flex items-center p-4">
+                  <FileText className="h-8 w-8 text-primary mr-4" />
+                  <div className="flex-grow">
+                    <CardTitle className="text-base truncate">
+                      {doc.filename}
+                    </CardTitle>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                      <div className="flex items-center gap-1">
+                        <Building className="h-3 w-3" />
+                        <span>{doc.department}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>{format(new Date(doc.uploaded_at), "PPP")}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="mx-4">
+                    {doc.category}
+                  </Badge>
+                  <Button variant="outline" size="sm">
+                    View
+                  </Button>
+                </Card>
+              )
+            )}
           </div>
         ) : (
           <div className="text-center py-20 text-muted-foreground h-full flex flex-col justify-center items-center">
@@ -191,7 +226,7 @@ export default function DocumentsPage() {
         )}
       </div>
 
-      <div className="flex-shrink-0 pt-6 flex justify-between items-center">
+      <div className="flex-shrink-0 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <span className="text-sm text-muted-foreground">
           Showing {pagination.skip + 1} -{" "}
           {Math.min(pagination.skip + pagination.limit, totalDocuments)} of{" "}
@@ -210,7 +245,7 @@ export default function DocumentsPage() {
             disabled={pagination.skip === 0}
           >
             <ChevronLeft className="h-4 w-4" />
-            Previous
+            <span className="hidden sm:inline">Previous</span>
           </Button>
           <span className="text-sm font-medium">
             Page {currentPage} of {totalPages}
@@ -226,7 +261,7 @@ export default function DocumentsPage() {
             }
             disabled={currentPage >= totalPages}
           >
-            Next
+            <span className="hidden sm:inline">Next</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

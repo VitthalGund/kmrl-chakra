@@ -44,9 +44,8 @@ function SidebarNav() {
   const { user, logout } = useAuth();
 
   const navItems = [
-    { href: "/dashboard", icon: Home, label: "Dashboard" },
+    { href: "/dashboard", icon: Search, label: "AI Search" },
     { href: "/dashboard/documents", icon: FileText, label: "Documents" },
-    { href: "/dashboard/search", icon: Search, label: "AI Search" },
     { href: "/dashboard/upload", icon: Upload, label: "Upload" },
     { href: "/dashboard/analytics", icon: LineChart, label: "My Analytics" },
     { href: "/dashboard/notifications", icon: Bell, label: "Notifications" },
