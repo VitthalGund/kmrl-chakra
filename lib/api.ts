@@ -32,12 +32,6 @@ export interface User {
   status: string;
 }
 
-export interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-  sources?: Array<{ title: string; url: string }>;
-}
-
 export interface Document {
   id: string;
   filename: string;
@@ -45,6 +39,20 @@ export interface Document {
   department: string;
   tags: string[];
   uploaded_at: string;
+}
+
+export interface Source {
+  id: string;
+  file_name: string;
+  storage_url?: string;
+  context: string;
+  file_type?: string;
+}
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  sources?: Source[];
 }
 
 export interface Notification {
@@ -241,6 +249,24 @@ class ApiClient {
       token: token || "",
     });
     return `${API_BASE_URL}/api/v1/query/chat?${params}`;
+  }
+
+  async shareChat(
+    sessionId: string
+  ): Promise<{ shareable_link: string; share_id: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/collaboration/chat/${sessionId}/share`,
+      {
+        method: "POST",
+        headers: this.getHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to create shareable link");
+    }
+
+    return response.json();
   }
 }
 

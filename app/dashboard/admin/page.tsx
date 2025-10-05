@@ -1,5 +1,3 @@
-// app/dashboard/admin/page.tsx
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -108,7 +106,15 @@ export default function AdminAnalyticsPage() {
       typeof cx === "undefined" ||
       typeof cy === "undefined" ||
       typeof midAngle === "undefined" ||
-      typeof percent === "undefined"
+      typeof percent === "undefined" ||
+      !innerRadius ||
+      !outerRadius ||
+      typeof innerRadius !== "number" ||
+      typeof outerRadius !== "number" ||
+      typeof cx !== "number" ||
+      typeof cy !== "number" ||
+      typeof midAngle !== "number" ||
+      typeof percent !== "number"
     ) {
       return null;
     }
