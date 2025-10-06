@@ -60,8 +60,8 @@ export default function DocumentsPage() {
           filters.department !== "all" ? filters.department : undefined,
           filters.category !== "all" ? filters.category : undefined
         );
-        setDocuments(response);
-        setTotalDocuments(response.length);
+        setDocuments(response.documents);
+        setTotalDocuments(response.total);
       } catch (error) {
         toast.error("Failed to fetch documents.");
       } finally {
@@ -78,13 +78,13 @@ export default function DocumentsPage() {
     totalDocuments > 0 ? pagination.skip / pagination.limit + 1 : 1;
 
   const DocumentCard = ({ doc }: { doc: Document }) => (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full p-4">
       <CardHeader>
         <div className="flex items-start justify-between">
           <FileText className="h-8 w-8 text-primary" />
           <Badge variant="outline">{doc.category}</Badge>
         </div>
-        <CardTitle className="pt-4 text-lg truncate">{doc.filename}</CardTitle>
+        <CardTitle className="pt-4 text-lg truncate">{doc.file_name}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow space-y-2 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export default function DocumentsPage() {
         </div>
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4" />
-          <span>{format(new Date(doc.uploaded_at), "PPP")}</span>
+          <span>{format(new Date(doc.upload_date), "PPP")}</span>
         </div>
       </CardContent>
       <CardFooter>
@@ -188,13 +188,13 @@ export default function DocumentsPage() {
           >
             {documents.map((doc) =>
               viewMode === "grid" ? (
-                <DocumentCard key={doc.id} doc={doc} />
+                <DocumentCard key={doc._id} doc={doc} />
               ) : (
-                <Card key={doc.id} className="flex items-center p-4">
+                <Card key={doc._id} className="flex items-center p-4">
                   <FileText className="h-8 w-8 text-primary mr-4" />
-                  <div className="flex-grow">
+                  <div className="flex-grow p-4">
                     <CardTitle className="text-base truncate">
-                      {doc.filename}
+                      {doc.file_name}
                     </CardTitle>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
                       <div className="flex items-center gap-1">
@@ -203,7 +203,7 @@ export default function DocumentsPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        <span>{format(new Date(doc.uploaded_at), "PPP")}</span>
+                        <span>{format(new Date(doc.upload_date), "PPP")}</span>
                       </div>
                     </div>
                   </div>

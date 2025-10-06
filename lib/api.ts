@@ -35,14 +35,33 @@ export interface AdminUserList {
   users: User[];
 }
 
-export interface Document {
-  id: string;
-  filename: string;
-  category: string;
+
+type DocumentChunk = {
+  chunk_id: string;
+  page_number: number;
+  text: string;
+};
+
+export type Document = {
+  _id: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
   department: string;
+  category: string;
   tags: string[];
-  uploaded_at: string;
-}
+  access_roles: string[];
+  uploader_email: string;
+  upload_date: string;
+  text_chunks?: DocumentChunk[];
+  image_chunks?: any[]; // Adjust the type if you have more info on image chunks
+  storage_url?: string | null;
+};
+
+type FileData = {
+  total: number;
+  documents: Document[];
+};
 
 export interface Source {
   id: string;
@@ -157,7 +176,7 @@ class ApiClient {
     limit = 50,
     department: string | undefined,
     category: string | undefined
-  ): Promise<Document[]> {
+  ): Promise<FileData> {
     const res = await this.axios.post(`/api/v1/documents/filter`, {
       skip,
       limit,
