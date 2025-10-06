@@ -197,7 +197,7 @@ export default function KnowledgeDiscoveryPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/query/chat`,
+        `https://kmrl-chakra-be.onrender.com/api/v1/query/chat`,
         {
           method: "POST",
           headers: {
