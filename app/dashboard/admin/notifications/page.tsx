@@ -80,7 +80,7 @@ export default function AdminNotificationsPage() {
     const toastId = toast.loading("Sending notification...");
 
     try {
-      await apiClient.axios.post("/notifications/broadcast", {
+      await apiClient.axios.post("/api/v1/notifications/broadcast", {
         title,
         message,
         target: targetPayload,

@@ -60,7 +60,7 @@ export default function AdminUploadPage() {
       if (type === "file" && file) {
         formData.append("file", file);
         response = await apiClient.axios.post(
-          "/documents/upload/file",
+          "/api/v1/documents/upload-file",
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -73,7 +73,7 @@ export default function AdminUploadPage() {
           `Text Upload - ${new Date().toISOString()}`
         );
         response = await apiClient.axios.post(
-          "/documents/upload/text",
+          "/api/v1/documents/upload-text",
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -82,7 +82,7 @@ export default function AdminUploadPage() {
       } else if (type === "url" && url) {
         formData.append("url", url);
         response = await apiClient.axios.post(
-          "/documents/upload/url",
+          "/api/v1/documents/upload-url",
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },

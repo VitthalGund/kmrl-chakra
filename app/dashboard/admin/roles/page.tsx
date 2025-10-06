@@ -65,7 +65,7 @@ export default function AdminRolesPage() {
   const fetchRoles = async () => {
     setIsLoading(true);
     try {
-      const { data } = await apiClient.axios.get("/admin/roles");
+      const { data } = await apiClient.axios.get("/api/v1/admin/roles");
       setRoles(data);
     } catch {
       toast.error("Failed to fetch roles.");
@@ -99,7 +99,7 @@ export default function AdminRolesPage() {
 
     const toastId = toast.loading("Creating new role...");
     try {
-      await apiClient.axios.post("/admin/roles", {
+      await apiClient.axios.post("/api/v1/admin/roles", {
         role_name: newRoleName,
         description: newRoleDesc,
         permissions: newRolePermissions,
